@@ -15,18 +15,19 @@ export default class HiddenField extends ComponentBase {
     render() {
 
         const {
-            name
+            name,
+            value
         } = this.props;
 
         const data = this.onChangeHandler.state.data;
 
-        const value = data ? data[name] : '';
+        data[name] = value || ''; // Set it on the data of the handler so it can post the initial value
 
         return (
             <Input
                 name={name}
                 type="hidden"
-                value={value}
+                value={data[name]}
             />
         );
     }

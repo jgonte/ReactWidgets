@@ -6,7 +6,7 @@ promise.polyfill();
 
 export default class FetchSubmitter {
 
-    write(message) {
+    submit(message) {
 
         message.headers = message.headers || {};
 
@@ -23,7 +23,7 @@ export default class FetchSubmitter {
             })
             .then(response => {
 
-                if (response.status != 204) { // No content
+                if (response.status !== 204) { // No content
 
                     processResponse(this, response);                    
                 }

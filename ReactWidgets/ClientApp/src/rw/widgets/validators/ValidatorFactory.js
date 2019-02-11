@@ -1,4 +1,5 @@
 ﻿import RequiredValidator from './RequiredValidator';
+import EmailValidator from './EmailValidator';
 import MaxLengthValidator from './MaxLengthValidator';
 
 class ValidatorFactory {
@@ -50,6 +51,7 @@ let validatorFactory = new ValidatorFactory();
 
 // Register the validators here
 validatorFactory.register('required', () => new RequiredValidator());
+validatorFactory.register('email', () => new EmailValidator());
 validatorFactory.register('maxLength', () => new MaxLengthValidator());
 
 export default validatorFactory;

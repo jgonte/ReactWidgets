@@ -1,6 +1,9 @@
 ﻿// CSS imports
 import 'antd/dist/antd.css';
 
+// Utilities
+export { default as utils } from './utils';
+
 // Component manager
 export { default as componentManager } from './componentManager';
 
@@ -13,6 +16,7 @@ export { default as AsyncForm } from './widgets/forms/AsyncForm';
 // Fields
 export { default as HiddenField } from './widgets/fields/HiddenField';
 export { default as TextField } from './widgets/fields/TextField';
+export { default as PasswordField } from './widgets/fields/PasswordField';
 export { default as NumberField } from './widgets/fields/NumberField';
 export { default as DateField } from './widgets/fields/DateField';
 export { default as CheckBox } from './widgets/fields/CheckBox';
@@ -34,5 +38,6 @@ export {
     Icon,
     Card,
     Menu,
-    Breadcrumb
+    Breadcrumb,
+    Modal
 } from 'antd';

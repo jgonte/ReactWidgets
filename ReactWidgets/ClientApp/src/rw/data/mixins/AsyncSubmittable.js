@@ -15,9 +15,9 @@ const AsyncSubmittable = (Base) => class extends Base {
             this.submitter = new FetchSubmitter();
         }
 
-        if (props.onWrite) {
+        if (props.onSubmit) {
 
-            this.onWrite = props.onWrite.bind(this);
+            this.onSubmit = props.onSubmit.bind(this);
         }
 
         this.submit = this.submit.bind(this);
@@ -40,9 +40,9 @@ const AsyncSubmittable = (Base) => class extends Base {
             throw new Error('Submitter is required.');
         }
 
-        this.submitter.onData = this.onWriteData.bind(this);
+        this.submitter.onData = this.onSubmitData.bind(this);
 
-        this.submitter.onFailure = this.onWriteFailure.bind(this);
+        this.submitter.onFailure = this.onSubmitFailure.bind(this);
 
         this.submitUrl = submitUrl || this.submitUrl;
 
@@ -88,14 +88,14 @@ const AsyncSubmittable = (Base) => class extends Base {
 
         const { data } = state;
 
-        submitter.write({
+        submitter.submit({
             submitUrl: url,
             method: method,
             data
         });
     }
 
-    onWriteData(data) {
+    onSubmitData(data) {
 
         const {
             state,
@@ -106,13 +106,13 @@ const AsyncSubmittable = (Base) => class extends Base {
 
         this.setState({ ...state, submitting: false, error: null });
 
-        if (this.onWrite) {
+        if (this.onSubmit) {
 
-            this.onWrite();
+            this.onSubmit(data);
         }
     }
 
-    onWriteFailure(error) {
+    onSubmitFailure(error) {
 
         const { state } = this;
 
