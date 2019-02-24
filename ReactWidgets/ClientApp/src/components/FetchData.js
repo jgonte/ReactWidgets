@@ -6,6 +6,11 @@ export class FetchData extends Component {
     createTable() {
         const columns = [
             {
+                name: 'id',
+                key: 'id',
+                title: 'Id'
+            },
+            {
                 name: 'dateFormatted',
                 key: 'dateFormatted',
                 title: 'Date'
@@ -29,7 +34,7 @@ export class FetchData extends Component {
                 name: 'edit',
                 key: 'edit',
                 render: (text, record) => (
-                    <Button onClick={() => {
+                    <Button icon="edit" onClick={() => {
 
                         //const dialog = componentManager.get('editQuestionWithAnswerDialog');
 
@@ -46,11 +51,11 @@ export class FetchData extends Component {
                 name: 'delete',
                 key: 'delete',
                 render: (text, record) => (
-                    <Button onClick={() => {
+                    <Button icon="delete" onClick={() => {
 
                         //const dialog = componentManager.get('deleteQuestionWithAnswerDialog');
 
-                        //dialog.setId(record.id);
+                        //dialog.setParams(record.id);
 
                         //dialog.show();
 
@@ -65,7 +70,7 @@ export class FetchData extends Component {
             <AsyncLoadableDataTable
                 columns={columns}
                 loadUrl="api/SampleData/WeatherForecasts"
-                rowKey="Id"
+                rowKey="id"
             />
         );
     }
