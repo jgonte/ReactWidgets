@@ -34,36 +34,7 @@ export default class FilterField extends Component {
             }
         };
 
-        this.onChange = this.onChange.bind(this);
-    }
-
-    render() {
-
-        const formItemLayout = {
-            labelCol: {
-                xs: { span: 24 },
-                sm: { span: 6 },
-            },
-            wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 14 },
-            },
-        };
-
-        return (
-            <FormItem
-                {...formItemLayout}
-                label={this.props.label}
-            >
-                <InputGroup
-                    compact
-                    style={{ width: '100%' }}
-                >
-                    {this.renderOperators()}
-                    {this.renderField()}
-                </InputGroup>
-            </FormItem>
-        );
+        this.handleChange = this.handleChange.bind(this);
     }
 
     renderOperators() {
@@ -119,11 +90,11 @@ export default class FilterField extends Component {
             name: 'value',
             style: { width: '50%' },
             parent: this,
-            onChange: this.onChange
+            handleChange: this.handleChange
         });
     }
 
-    onChange(event) { // The scope of this function is the nested field
+    handleChange(event) { // The scope of this function is the nested field
 
         const target = event.target;
 
@@ -155,4 +126,33 @@ export default class FilterField extends Component {
             view.updateData();
         }, 1500);
     }
-};
+
+    render() {
+
+        const formItemLayout = {
+            labelCol: {
+                xs: { span: 24 },
+                sm: { span: 6 }
+            },
+            wrapperCol: {
+                xs: { span: 24 },
+                sm: { span: 14 }
+            },
+        };
+
+        return (
+            <FormItem
+                {...formItemLayout}
+                label={this.props.label}
+            >
+                <InputGroup
+                    compact
+                    style={{ width: '100%' }}
+                >
+                    {this.renderOperators()}
+                    {this.renderField()}
+                </InputGroup>
+            </FormItem>
+        );
+    }
+}

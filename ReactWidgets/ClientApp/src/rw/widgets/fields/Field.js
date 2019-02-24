@@ -1,28 +1,60 @@
 import ComponentBase from '../../ComponentBase';
 import LabelledField from './LabelledField';
+import Form from '../forms/Form';
 import validatorFactory from '../validators/ValidatorFactory';
 
 export default class Field extends ComponentBase {
 
-    validators =  [];
+    validators = [];
+
+    validateOnChange = true;
+
+    constructor(props) {
+
+        super(props);
+
+        this.handleChange = this.handleChange.bind(this);
+
+        this.validateOnChange = this.validateOnChange || props.validateOnChange;
+    }
 
     componentWillMount() {
 
         if (!this.onChangeHandler) {
 
-            this.onChangeHandler = this.findParent(this, p => p.onChange);
+            this.onChangeHandler = this.findParent(p => p.handleChange);
 
             // Register this field with the parent
             this.onChangeHandler.fields = this.onChangeHandler.fields || [];
 
             this.onChangeHandler.fields.push(this);
+        }
+    }
 
-            // Create the validators from the props
-            if (this.props.validators &&
-                this.props.validators.length) {
+    componentDidMount() {
 
-                this.props.validators.forEach(v => this.validators.push(validatorFactory.get(v.type, v)));
-            }
+        super.componentDidMount();
+
+        // Create the validators from the props
+        if (this.props.validators &&
+            this.props.validators.length) {
+
+            this.props.validators.forEach(v => this.validators.push(validatorFactory.get(v.type, v)));
+        }
+    }
+
+    handleChange(evt) {
+
+        if (this.validateOnChange) {
+
+            this.validate(evt.target);
+        }
+
+        this.onChangeHandler.handleChange(evt);
+
+        if (this.onChange) {
+
+            this.onChange(evt);
         }
     }
 
@@ -35,38 +67,46 @@ export default class Field extends ComponentBase {
         return value.toString();
     }
 
-    validate() {
+    getForm() {
+
+        return this.findParent(p => p instanceof Form);
+    }
+
+    validate(target) {
 
         const validators = this.validators;
 
-        if (validators &&
-            validators.length) {
+        if (!validators &&
+            !validators.length) {
 
-            const labelledField = this.findParent(this, p => p instanceof LabelledField);
+            return;
+        }
 
-            if (labelledField) { // Reset any error
+        const labelledField = this.findParent(p => p instanceof LabelledField);
 
-                labelledField.setValidation('', '', false);
-            }
+        if (labelledField) { // Reset any error
 
-            const value = this.getValue();
+            labelledField.setValidation('', '', false);
+        }
 
-            for (let i = 0; i < validators.length; ++i) {
+        const value = target ? target.value : this.getValue();
 
-                const validator = validators[i];
+        for (let i = 0; i < validators.length; ++i) {
 
-                let message = validator.validate(value);
+            const validator = validators[i];
 
-                if (message) {
+            validator.field = this; // Set the field to allow the validator to go up the hierarchy in some cases (such as the CompareValidator)
 
-                    if (labelledField) { // Set error message
+            let message = validator.validate(value);
 
-                        labelledField.setValidation(message, 'error', false);
-                    }
+            if (message) {
 
-                    return message; // One failed validation only per field
+                if (labelledField) { // Set error message
+
+                    labelledField.setValidation(message, 'error', false);
                 }
 
+                return message; // One failed validation only per field, if a message exists, then the validation has field
             }
         }
     }

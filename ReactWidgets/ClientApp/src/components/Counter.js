@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Icon } from '../rw';
+import { Button } from '../rw';
 
 export class Counter extends Component {
     displayName = Counter.name
@@ -24,7 +24,7 @@ export class Counter extends Component {
                 <p>This is a simple example of a React component.</p>
                 <p>Current count: <strong>{this.state.currentCount}</strong></p>
 
-                <Button type="success" onClick={this.incrementCounter} >
+                <Button type="success" icon="plus-circle" onClick={this.incrementCounter} >
                     Increment
                 </Button>
             </div>

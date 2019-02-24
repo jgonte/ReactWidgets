@@ -13,7 +13,7 @@ const NavMenu = props => (
         style={{ height: '100%' }}
     >
         <Menu.Item key="1">
-            <Link to="/" exact>
+            <Link to="/" exact="true">
                 <span>
                     <Icon type="home" />
                     Home

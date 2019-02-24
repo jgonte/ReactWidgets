@@ -11,9 +11,11 @@ export default class MetadataHeaderMetadataMapper {
         //     return JSON.parse(header);
         // }
 
+        const payload = conf.payload || []; // Payload might be nill when there is no data loaded
+
         return {
             eTag: headers.get('ETag'),
-            totalRecords: conf.payload.length
+            totalRecords: payload.length
         };
     }
 }

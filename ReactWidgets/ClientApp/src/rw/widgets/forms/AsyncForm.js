@@ -1,39 +1,39 @@
-import React from 'react';
 import Form from './Form';
 import AsyncLoadableSingleItem from '../../data/mixins/AsyncLoadableSingleItem';
 import AsyncSubmittable from '../../data/mixins/AsyncSubmittable';
-import { Button } from 'antd';
 
 export default class AsyncForm extends AsyncSubmittable(AsyncLoadableSingleItem(Form)) {
 
-    constructor(props) {
-        super(props);
-
-        this.submit = this.submit.bind(this);
-    }
-
     render() {
 
-        return (
+        const {
+            loading,
+            data,
+            error,
+            submitting
+        } = this.state;
 
-            <form>
-                {this.renderChildren()}
-                {this.renderSubmitButton()}
-            </form>
-        );
+        if (loading) {
+
+            return this.renderLoading();
+        }
+
+        if (error) {
+
+            return this.renderError(error);
+        }
+
+        if (submitting) {
+
+            return this.renderSubmitting();
+        }
+
+        return this.renderComponent(data);
     }
 
-    renderSubmitButton() {
-        return (
-            <div>
-                <Button
-                    type="primary"
-                    onClick={this.submit}
-                >
-                    Submit
-                    </Button>
-            </div>
-        );
+    onAfterSubmit() {
+
+        this.reset();
     }
-};
+}
 

@@ -8,7 +8,7 @@ export default class HiddenField extends ComponentBase {
 
         if (!this.onChangeHandler) {
 
-            this.onChangeHandler = this.findParent(this, p => p.onChange);
+            this.onChangeHandler = this.findParent(p => p.handleChange);
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿import RequiredValidator from './RequiredValidator';
 import EmailValidator from './EmailValidator';
 import MaxLengthValidator from './MaxLengthValidator';
+import CompareValidator from './CompareValidator';
 
 class ValidatorFactory {
 
@@ -53,5 +54,6 @@ let validatorFactory = new ValidatorFactory();
 validatorFactory.register('required', () => new RequiredValidator());
 validatorFactory.register('email', () => new EmailValidator());
 validatorFactory.register('maxLength', () => new MaxLengthValidator());
+validatorFactory.register('compare', () => new CompareValidator());
 
 export default validatorFactory;

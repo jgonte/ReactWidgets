@@ -16,7 +16,7 @@ export default class CheckBox extends Field {
                 name={name}
                 checked={this.getValue()}
                 style={style}
-                onChange={this.onChangeHandler.onChange}
+                onChange={this.handleChange}
             />
         );
     }

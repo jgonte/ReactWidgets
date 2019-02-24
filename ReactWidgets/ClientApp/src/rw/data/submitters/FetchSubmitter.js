@@ -23,10 +23,7 @@ export default class FetchSubmitter {
             })
             .then(response => {
 
-                if (response.status !== 204) { // No content
-
-                    processResponse(this, response);                    
-                }
+                processResponse(this, response);
             })
             .catch(error => {
 

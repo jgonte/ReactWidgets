@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AsyncLoadableDataTable, Button, Icon } from "../rw";
+import { AsyncLoadableDataTable, Button } from "../rw";
 
 export class FetchData extends Component {
 
@@ -65,6 +65,7 @@ export class FetchData extends Component {
             <AsyncLoadableDataTable
                 columns={columns}
                 loadUrl="api/SampleData/WeatherForecasts"
+                rowKey="Id"
             />
         );
     }

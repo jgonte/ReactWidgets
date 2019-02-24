@@ -17,6 +17,10 @@ export class SendData extends React.Component {
             <AsyncForm
                 autoLoad={false}
                 submitUrl="api/SampleData/WeatherForecasts"
+                submitButton={{
+                    label: "Submit Forecast",
+                    type: "primary"
+                }}
             >
 
                 <HiddenField name="id" />

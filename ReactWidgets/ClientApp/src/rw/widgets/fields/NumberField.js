@@ -16,7 +16,7 @@ export default class NumberField extends Field {
                 name={name}
                 value={this.getValue()}
                 placeholder={placeholder}
-                onChange={this.onChangeHandler.onChange}
+                onChange={this.handleChange}
                 onFocus={this.onFocus}
                 onBlur={this.onBlur}
             />

@@ -21,7 +21,7 @@ export default class DateField extends Field {
                 format={format}
                 placeholder={placeholder}
                 style={style}
-                onChange={value => this.onChangeHandler.onChange({
+                onChange={value => this.handleChange({
                     target: {
                         name: name,
                         type: 'datefield',

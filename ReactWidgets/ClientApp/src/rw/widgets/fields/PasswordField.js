@@ -19,7 +19,7 @@ export default class PasswordField extends Field {
                 value={this.getValue()}
                 placeholder={placeholder}
                 style={style}
-                onChange={this.onChangeHandler.onChange}
+                onChange={this.handleChange}
                 onFocus={this.onFocus}
                 onBlur={this.onBlur}
             />

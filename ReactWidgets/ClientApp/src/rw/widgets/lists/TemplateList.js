@@ -5,7 +5,7 @@ import './TemplateList.css';
 
 export default class TemplateList extends CollectionDataHandler(ComponentBase) {
 
-    renderData(data) {
+    renderComponent(data) {
         
         return (
             <ul className="nxt-list">

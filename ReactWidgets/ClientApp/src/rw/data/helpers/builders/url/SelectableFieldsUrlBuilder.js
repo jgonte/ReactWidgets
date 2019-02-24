@@ -23,7 +23,7 @@ export default class SelectableFieldsUrlBuilder {
 
             const args = `${this.fieldsProperty}=${fields.join(',')}`;
 
-            return (loadUrl.indexOf('?') === -1) ? loadUrl + '?' + args : loadUrl + args;
+            return loadUrl.indexOf('?') === -1 ? loadUrl + '?' + args : loadUrl + args;
         }
 
         return loadUrl;

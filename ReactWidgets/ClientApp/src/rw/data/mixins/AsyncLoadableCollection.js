@@ -25,9 +25,9 @@ const AsyncLoadableCollection = (Base) => class extends AsyncLoadable(Base) {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
 
-        super.componentWillMount();
+        super.componentDidMount();
 
         let {
             filters,
@@ -83,42 +83,12 @@ const AsyncLoadableCollection = (Base) => class extends AsyncLoadable(Base) {
         }
     }
 
-    render() {
-
-        if (this.mounting) {
-
-            return this.renderMounting();
-        }
-
-        const {
-            loading,
-            data,
-            error,
-            pageIndex,
-            pageSize,
-            totalRecords,
-            totalPages
-        } = this.state;
-
-        if (loading) {
-
-            return this.renderLoading();
-        }
-
-        if (error) {
-
-            return this.renderError(error);
-        }
-
-        return this.renderData(data);
-    }
-
     createReaderParams() {
 
         const {
             state,
             filters,
-            sorters,
+            //sorters,
             paginable
         } = this;
 
@@ -241,7 +211,7 @@ const AsyncLoadableCollection = (Base) => class extends AsyncLoadable(Base) {
         switch (filter.operator) {
             case "equals": return `item.${filter.fieldName} == '${filter.value}'`; // String comparison
             case "contains": return `item.${filter.fieldName}.toLowerCase().indexOf('${filter.value.toLowerCase()}') > -1`;
-            default: throw Error(`The function createFieldOperatorAndValue is not implemented for filter operator: '${filter.operator}'.`);
+            default: throw Error(`The function createFilterClause is not implemented for filter operator: '${filter.operator}'.`);
         }
     }
 

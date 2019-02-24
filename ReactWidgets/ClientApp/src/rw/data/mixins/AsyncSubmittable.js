@@ -1,10 +1,32 @@
+import React from 'react';
 import FetchSubmitter from '../../data/submitters/FetchSubmitter';
+import RestUrlBuilder from '../helpers/builders/url/RestUrlBuilder';
+import { Spin } from 'antd';
+
+const buildUrl = (submitUrl, queryParams) => {
+
+    if (!this.urlBuilder) {
+
+        this.urlBuilder = new RestUrlBuilder();
+    }
+
+    return this.urlBuilder.build({
+        url: submitUrl,
+        queryParams
+    });
+};
 
 const AsyncSubmittable = (Base) => class extends Base {
+
+    method = null; // The submit method 'post', 'put', 'delete', etcetera
 
     submitter = null;
 
     submitUrl = null;
+
+    params = null;
+
+    urlBuilder = null; // The URL builder to use if queryParams is not null
 
     constructor(props) {
 
@@ -15,17 +37,24 @@ const AsyncSubmittable = (Base) => class extends Base {
             this.submitter = new FetchSubmitter();
         }
 
-        if (props.onSubmit) {
+        if (props.onSubmitResponse) {
 
-            this.onSubmit = props.onSubmit.bind(this);
+            this.onSubmitResponse = props.onSubmitResponse.bind(this);
+        }
+
+        if (props.onSubmitData) {
+
+            this.onSubmitData = props.onSubmitData.bind(this);
         }
 
         this.submit = this.submit.bind(this);
+
+        this.urlBuilder = props.urlBuilder || this.urlBuilder;
     }
 
-    componentWillMount() {
+    componentDidMount() {
 
-        super.componentWillMount();
+        super.componentDidMount();
 
         let {
             submitter,
@@ -40,9 +69,11 @@ const AsyncSubmittable = (Base) => class extends Base {
             throw new Error('Submitter is required.');
         }
 
-        this.submitter.onData = this.onSubmitData.bind(this);
+        this.submitter.onResponse = this._onSubmitResponse.bind(this);
 
-        this.submitter.onFailure = this.onSubmitFailure.bind(this);
+        this.submitter.onData = this._onSubmitData.bind(this);
+
+        this.submitter.onFailure = this._onSubmitFailure.bind(this);
 
         this.submitUrl = submitUrl || this.submitUrl;
 
@@ -54,12 +85,31 @@ const AsyncSubmittable = (Base) => class extends Base {
         this.metadataMapper = metadataMapper || this.metadataMapper;
     }
 
+    getMethod(loaded) {
+
+        const method = this.props.method || this.method;
+
+        if (method) { // Explicitly configured
+
+            return method;
+        }
+
+        // If the method is not provided, guess it from the loaded flag
+        return loaded ? 'put' : 'post';
+    }
+
+    // The parameters to be sent in the query URL
+    setParams(params) {
+
+        this.params = params;
+    }
+
     submit() {
 
         if (this.onBeforeSubmit &&
             !this.onBeforeSubmit()) {
 
-            return;
+            return false; // Submit cancelled
         }
 
         const {
@@ -69,33 +119,33 @@ const AsyncSubmittable = (Base) => class extends Base {
             state
         } = this;
 
-        let url, method;
-
-        if (this.id) {
-
-            method = 'delete';
-
-            url = `${submitUrl}/${this.id}`;
-        }
-        else {
-
-            method = loaded ? 'put' : 'post';
-
-            url = submitUrl;
-        }
-
         this.setState({ ...state, submitting: true, error: null });
 
         const { data } = state;
 
         submitter.submit({
-            submitUrl: url,
-            method: method,
+            submitUrl: this.params ? buildUrl(submitUrl, this.params) : submitUrl, // If there are query parameters, then build the submit URL with those
+            method: this.getMethod(loaded),
             data
         });
+
+        return true; // In this case for example you can dismiss a dialog, etcetera
     }
 
-    onSubmitData(data) {
+    _onSubmitResponse(response) {
+
+        if (this.onAfterSubmit) {
+
+            this.onAfterSubmit(response);
+        }
+
+        if (this.onSubmitResponse) {
+
+            this.onSubmitResponse(response);
+        }
+    }
+
+    _onSubmitData(data) {
 
         const {
             state,
@@ -106,17 +156,26 @@ const AsyncSubmittable = (Base) => class extends Base {
 
         this.setState({ ...state, submitting: false, error: null });
 
-        if (this.onSubmit) {
+        if (this.onSubmitData) {
 
-            this.onSubmit(data);
+            this.onSubmitData(data);
         }
     }
 
-    onSubmitFailure(error) {
+    _onSubmitFailure(error) {
 
         const { state } = this;
 
         this.setState({ ...state, submitting: false, error: error });
+    }
+
+    renderSubmitting() {
+
+        return (
+            <Spin tip="Submitting...">
+                {this.renderComponent()}
+            </Spin>
+        );
     }
 };
 

@@ -25,7 +25,7 @@ export default class ComboBox extends DataHandler(Field) {
         this.textProperty = textProperty || this.textProperty;
     }
 
-    renderData(data) {
+    renderComponent(data) {
 
         const {
             name,
@@ -44,7 +44,7 @@ export default class ComboBox extends DataHandler(Field) {
                 disabled={disabled}
                 defaultValue={defaultValue}
                 optionFilterProp="children"
-                onChange={value => this.onChangeHandler.onChange({
+                onChange={value => this.handleChange({
                     target: {
                         name: name,
                         type: 'select',

@@ -1,6 +1,6 @@
 import React from 'react';
 import ComponentBase from '../../ComponentBase';
-import { Modal, Button } from 'antd';
+import { Modal } from 'antd';
 
 export default class Dialog extends ComponentBase {
 
@@ -13,6 +13,8 @@ export default class Dialog extends ComponentBase {
         this.state = {
             visible: false
         };
+
+        this.title = props.title || this.title;
 
         const onBeforeShow = props.onBeforeShow || this.onBeforeShow;
         
@@ -31,6 +33,10 @@ export default class Dialog extends ComponentBase {
         this.handleOk = this.handleOk.bind(this);
 
         this.onOk = (props.onOk || this.onOk).bind(this); // Required
+
+        this.okText = props.okText || this.okText;
+
+        this.okType = props.okType || this.okType;
 
         this.handleCancel = this.handleCancel.bind(this);
 
@@ -72,7 +78,10 @@ export default class Dialog extends ComponentBase {
 
     handleOk(evt) {
 
-        this.onOk();
+        if (this.onOk() === false) {
+
+            return; // Do not hide
+        }
 
         this.hide();
     }
@@ -88,49 +97,46 @@ export default class Dialog extends ComponentBase {
     }
 
     renderChildren() {
+
         return this.props.children;
     }
 
     render() {
 
-        const { title } = this.props;
+        const {
+            title,
+            initiallyVisible,
+            okText,
+            okType,
+            handleOk,
+            handleCancel
+        } = this;
 
         // Hack to allow the modal to mount even when is initially invisible
-        if (!this.initiallyVisible) {
+        let maskStyle = !initiallyVisible ? { display: 'none' } : undefined;
+
+        let wrapProps = !initiallyVisible ? { style: { display: 'none' } } : undefined;
+
+        let visible = !initiallyVisible ? true : this.state.visible;
+
+        if (!initiallyVisible) {
 
             this.initiallyVisible = true;
-
-            return (
-                <Modal
-                    visible={true}
-                    title={title}
-                    onOk={this.handleOk}
-                    onCancel={this.handleCancel}
-                    maskStyle={{display: 'none'}}
-                    wrapProps={{ style: {display: 'none'}}}
-                >
-                    {this.renderChildren()}
-                </Modal>
-            );
         }
-        else {
 
-            const {
-                visible,
-                loading
-            } = this.state;
-    
-            return (
-                <Modal
-                    visible={visible}
-                    title={title}
-                    onOk={this.handleOk}
-                    onCancel={this.handleCancel}
-                >
-                    {this.renderChildren()}
-                </Modal>
-            );
-        }
-        
+        return (
+            <Modal
+                visible={visible}
+                title={title}
+                okText={okText}
+                okType={okType}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                maskStyle={maskStyle}
+                wrapProps={wrapProps}
+            >
+                {this.renderChildren()}
+            </Modal>
+        );
     }
-};
+}

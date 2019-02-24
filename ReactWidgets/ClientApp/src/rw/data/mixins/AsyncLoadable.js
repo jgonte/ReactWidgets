@@ -1,4 +1,5 @@
 import React from 'react';
+import { Spin, notification } from 'antd';
 
 const AsyncLoadable = (Base) => class extends Base {
 
@@ -19,9 +20,9 @@ const AsyncLoadable = (Base) => class extends Base {
         this.loadParams = params;
     }
 
-    componentWillMount() {
+    componentDidMount() {
 
-        super.componentWillMount();
+        super.componentDidMount();
 
         let {
             loader,
@@ -48,11 +49,6 @@ const AsyncLoadable = (Base) => class extends Base {
 
             this.autoLoad = this.props.autoLoad;
         }
-    }
-
-    componentDidMount() {
-
-        super.componentDidMount();
 
         if (this.autoLoad) {
 
@@ -114,7 +110,6 @@ const AsyncLoadable = (Base) => class extends Base {
 
         return headers;
     }
-
 
     onReadData(data) {
 
@@ -182,19 +177,46 @@ const AsyncLoadable = (Base) => class extends Base {
         }
     }
 
-    renderMounting() {
+    render() {
 
-        return (<div></div>);
+        const {
+            loading,
+            data,
+            error
+        } = this.state;
+
+        if (loading) {
+
+            return this.renderLoading();
+        }
+
+        if (error) {
+
+            return this.renderError(error);
+        }
+
+        return this.renderComponent(data);
     }
 
     renderLoading() {
 
-        return (<div>Loading...</div>);
+        return (
+            <Spin tip="Loading...">
+                {this.renderComponent(null)}
+            </Spin>
+        );
     }
 
     renderError(error) {
 
-        return (<div>{error.message}</div>);
+        notification.error({
+            message: 'Error loading component',
+            description: error.message
+        });
+
+        return (
+            <div>{error.message}</div>
+        );
     }
 };
 

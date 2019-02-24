@@ -88,9 +88,10 @@ export default class CollectionUrlBuilder extends SelectableFieldsUrlBuilder {
             });
 
             if (args.length) {
+
                 let qs = args.join('&');
 
-                return (loadUrl.indexOf('?') === -1) ? loadUrl + '?' + qs : loadUrl + '&' + qs;
+                return loadUrl.indexOf('?') === -1 ? loadUrl + '?' + qs : loadUrl + '&' + qs;
             }
 
         }

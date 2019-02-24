@@ -21,37 +21,11 @@ const AsyncLoadableSingleItem = (Base) => class extends AsyncLoadable(Base) {
         }
     }
 
-    render() {
-
-        if (this.mounting) {
-
-            return this.renderMounting();
-        }
-
-        const {
-            loading,
-            data,
-            error
-        } = this.state;
-
-        if (loading) {
-
-            return this.renderLoading();
-        }
-
-        if (error) {
-
-            return this.renderError(error);
-        }
-
-        return this.renderData(data);
-    }
-
     createReaderParams() {
 
-        const {
-            state
-        } = this;
+        //const {
+        //    state
+        //} = this;
 
         let params = {
             url: this.url

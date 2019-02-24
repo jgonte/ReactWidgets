@@ -3,8 +3,8 @@ const DataHandler = (Base) => class extends Base {
 
     render() {
 
-        return this.renderData(this.props.data);
+        return this.renderComponent(this.props.data);
     }
-}
+};
 
 export default DataHandler;
