@@ -1,0 +1,5 @@
+/.vs/ReactWidgets.Solution/DesignTimeBuild/*.dtbcache
+/.vs/ReactWidgets.Solution/v15
+/.vs/config
+/ReactWidgets/ClientApp/package-lock.json
+/ReactWidgets/ClientApp/*.lock
