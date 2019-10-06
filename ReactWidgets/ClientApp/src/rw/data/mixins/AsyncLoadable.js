@@ -5,8 +5,6 @@ const AsyncLoadable = (Base) => class extends Base {
 
     loader = null;
 
-    loadUrl = null;
-
     autoLoad = true;
 
     metadataMapper = null;
@@ -14,6 +12,8 @@ const AsyncLoadable = (Base) => class extends Base {
     requiresRefresh = true;
 
     loadParams = null;
+
+    _onLoadActions = []; // Private actions to be implemented by the components when loaded so we leave the onLoad method free for the user to extend
 
     setLoadParams(params) {
 
@@ -26,7 +26,6 @@ const AsyncLoadable = (Base) => class extends Base {
 
         let {
             loader,
-            loadUrl,
             metadataMapper
         } = this.props;
 
@@ -37,13 +36,16 @@ const AsyncLoadable = (Base) => class extends Base {
             throw new Error('Loader is required.');
         }
 
-        this.loader.onData = this.onReadData.bind(this);
+        this.loader.onData = this._onLoad.bind(this);
 
-        this.loader.onFailure = this.onReadFailure.bind(this);
-
-        this.loadUrl = loadUrl || this.loadUrl;
+        this.loader.onFailure = this._onLoadFailure.bind(this);
 
         this.metadataMapper = metadataMapper || this.metadataMapper;
+
+        if (this.props.onLoad) {
+
+            this.onLoad = this.props.onLoad.bind(this);
+        }
 
         if (typeof this.props.autoLoad !== 'undefined') {
 
@@ -60,31 +62,50 @@ const AsyncLoadable = (Base) => class extends Base {
 
         const {
             loader,
-            loadUrl,
             state
         } = this;
+
+        this.setState({
+            ...state, // Keep previous loaded data
+            loading: true,
+            error: null
+        });
+
+        const params = this.createReaderParams();
+
+        loader.load({
+            ...params,
+            loadUrl: this.buildLoadUrl(),
+            headers: this.createHeadersFromMetadata()
+        });
+    }
+
+    buildLoadUrl() {
+
+        const {
+            loadUrl
+        } = this.props;
 
         if (!loadUrl) {
 
             throw new Error('Load URL is required.');
         }
 
-        let url;
+        const {
+            loadParams
+        } = this;
 
-        if (this.loadParams) {
+        if (loadParams) {
 
-            url = `${loadUrl}/${this.loadParams}`; // TODO: Create an extension method for this
+            const keys = Object.keys(loadParams);
+
+            // Unwrap if the parameter is a single value
+            return `${loadUrl}/${keys.length === 1 ? loadParams[keys[0]] : loadParams}`;
         }
         else {
 
-            url = loadUrl;
+            return loadUrl;
         }
-
-        this.setState({ ...state, data: null, loading: true, error: null });
-
-        const params = this.createReaderParams();
-
-        loader.read({ ...params, loadUrl: url, headers: this.createHeadersFromMetadata() });
     }
 
     createHeadersFromMetadata() {
@@ -111,7 +132,7 @@ const AsyncLoadable = (Base) => class extends Base {
         return headers;
     }
 
-    onReadData(data) {
+    _onLoad(data) {
 
         const {
             state,
@@ -136,6 +157,13 @@ const AsyncLoadable = (Base) => class extends Base {
         }
 
         this.loaded = true;
+
+        this._onLoadActions.forEach(onLoadAction => onLoadAction(data));
+
+        if (this.onLoad) {
+
+            this.onLoad(data);
+        }
     }
 
     updateStateFromCachedData() {
@@ -156,7 +184,7 @@ const AsyncLoadable = (Base) => class extends Base {
         this.setState({ ...state, data: data, loading: false, error: null }); // Update state
     }
 
-    onReadFailure(error) {
+    _onLoadFailure(error) {
 
         const { state } = this;
 
@@ -187,7 +215,7 @@ const AsyncLoadable = (Base) => class extends Base {
 
         if (loading) {
 
-            return this.renderLoading();
+            return this.renderLoading(data);
         }
 
         if (error) {
@@ -198,11 +226,11 @@ const AsyncLoadable = (Base) => class extends Base {
         return this.renderComponent(data);
     }
 
-    renderLoading() {
+    renderLoading(data) {
 
         return (
             <Spin tip="Loading...">
-                {this.renderComponent(null)}
+                {this.renderComponent(data)}
             </Spin>
         );
     }

@@ -1,9 +1,8 @@
 import React from 'react';
 import Dialog from './Dialog';
-import AsyncSubmittable from '../../data/mixins/AsyncSubmittable';
 import { Alert } from 'antd';
 
-export default class DeleteDialog extends AsyncSubmittable(Dialog) {
+export default class DeleteDialog extends Dialog {
 
     title = 'Please confirm';
 
@@ -13,30 +12,39 @@ export default class DeleteDialog extends AsyncSubmittable(Dialog) {
 
     okType = 'danger';
 
-    renderMessage() {
+    renderConfirm() {
 
-        const { message } = this.props;
+        const { confirm } = this.props;
 
-        if (message.indexOf('{{params}}') > -1) { // Replace with the value
+        const params = this.params;
 
-            return message.replace(/{{params}}/g, this.params);
+        if (params && confirm.indexOf('{{params}}') > -1) { // Replace with the value
+
+            const keys = Object.keys(params);
+
+            return confirm.replace(/{{params}}/g,
+                keys.length === 1 ? params[keys[0]] : JSON.stringify(params)
+            );
         }
 
-        return message;
+        return confirm;
     }
 
     renderChildren() {
 
         return (
             <Alert
-                message={this.renderMessage()}
+                message={this.renderConfirm()}
                 type="warning"
             />
         );
     }
 
-    onOk() {
+    validate() {
 
-        this.submit();
+        if (!this.params) {
+
+            throw new Error("Delete dialog must have params set");
+        }
     }
 }

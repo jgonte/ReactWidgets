@@ -6,7 +6,7 @@ promise.polyfill();
 
 export default class FetchLoader {
 
-    read(query) {
+    load(query) {
 
         let headers = new Headers();
 

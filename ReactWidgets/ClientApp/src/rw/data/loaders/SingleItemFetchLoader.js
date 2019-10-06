@@ -14,10 +14,10 @@ export default class SingleItemFetchLoader extends FetchLoader {
         this.urlBuilder = new SelectableFieldsUrlBuilder(urlBuilderConf);
     }
 
-    read(conf) {
+    load(conf) {
 
         const url = this.urlBuilder.build(conf);
 
-        super.read({ url });
+        super.load({ url });
     }
 }

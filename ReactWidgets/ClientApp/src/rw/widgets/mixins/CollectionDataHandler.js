@@ -17,6 +17,6 @@ const CollectionDataHandler = (Base) => class extends Pageable(DataHandler(Base)
         this.idProperty = idProperty || this.idProperty;
     }
 
-}
+};
 
 export default CollectionDataHandler;

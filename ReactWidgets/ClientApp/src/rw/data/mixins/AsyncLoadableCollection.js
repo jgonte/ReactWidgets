@@ -88,7 +88,7 @@ const AsyncLoadableCollection = (Base) => class extends AsyncLoadable(Base) {
         const {
             state,
             filters,
-            //sorters,
+            sorters,
             paginable
         } = this;
 

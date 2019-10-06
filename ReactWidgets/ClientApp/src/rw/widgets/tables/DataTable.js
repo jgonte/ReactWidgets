@@ -8,8 +8,7 @@ export default class DataTable extends CollectionDataHandler(ComponentBase) {
     renderComponent(data) {
 
         const {
-            columns,
-            rowKey,
+            recordKey,
             minWidth,
             minHeight
         } = this.props;
@@ -19,11 +18,14 @@ export default class DataTable extends CollectionDataHandler(ComponentBase) {
             y: minHeight
         };
 
+        let columns = this.getColumns();
+
         return (
             <div>
                 <Table
-                    rowKey={rowKey}
-                    columns={ // Map the columns to the format the antd table understands
+                    rowKey={recordKey.toString()}
+                    columns={
+                        // Map the columns to the format the antd table understands
                         columns.map(column => {
                             return {
                                 key: column.name,
@@ -41,5 +43,22 @@ export default class DataTable extends CollectionDataHandler(ComponentBase) {
                 {this.renderPager()}
             </div>
         );
+    }
+
+    getColumns() {
+
+        const {
+            columns,
+            actionColumns
+        } = this.props;
+
+        if (actionColumns) {
+
+            return [...columns, ...actionColumns];
+        }
+        else {
+
+            return columns;
+        }
     }
 }

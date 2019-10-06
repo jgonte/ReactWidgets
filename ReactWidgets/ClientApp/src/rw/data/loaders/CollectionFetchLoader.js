@@ -14,10 +14,10 @@ export default class CollectionFetchLoader extends FetchLoader {
         this.urlBuilder = new CollectionUrlBuilder(urlBuilderConf);
     }
 
-    read(conf) {
+    load(conf) {
 
         const url = this.urlBuilder.build(conf);
 
-        super.read({ url, headers: conf.headers });
+        super.load({ url, headers: conf.headers });
     }
 }

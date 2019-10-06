@@ -3,7 +3,7 @@ import Field from './Field';
 import { DatePicker } from 'antd';
 import moment from 'moment';
 
-export default class DateField extends Field {
+export default class DateTimeField extends Field {
 
     render() {
 
@@ -26,13 +26,14 @@ export default class DateField extends Field {
                 onChange={value => this.handleChange({
                     target: {
                         name: name,
-                        type: 'datefield',
+                        type: 'datetimefield',
                         value: value,
                         format: fmt
                     }
                 })}
                 onFocus={this.onFocus}
                 onBlur={this.onBlur}
+                showTime
             />
         );
     }

@@ -2,17 +2,31 @@ import React from 'react';
 import ComponentBase from '../../ComponentBase';
 import Container from '../mixins/Container';
 import { Button } from 'antd';
+import utils from '../../utils';
 
 const getTargetValue = target => {
 
     switch (target.type) {
         case 'checkbox': return target.checked;
-        case 'datefield': return target.format ? target.value.format(target.format) : target.value._d; // Is a momentjs object
+        case 'datefield':
+        case 'datetimefield': {
+
+            const value = target.value;
+
+            if (!value) {
+
+                return null;
+            }
+
+            return target.format ? value.format(target.format) : value._d; // It is a momentjs object
+        }
         default: return target.value;
     }
 };
 
 export default class Form extends Container(ComponentBase) {
+
+    fields = [];
 
     constructor(props) {
 
@@ -83,9 +97,37 @@ export default class Form extends Container(ComponentBase) {
 
     handleChange(event) {
 
-        const value = getTargetValue(event.target);
+        // If a value was provided in the event then get that value
+        const value = event.value || getTargetValue(event.target);
 
-        const data = { ...this.state.data, [event.target.name]: value };
+        const name = event.name || event.target.name;
+
+        let f = this.state.data[name];
+
+        let data;
+
+        if (Array.isArray(f)) { // Multiple values field
+
+            if (getTargetValue(event.target)) { // Is checked, add the value
+
+                f.push(value);
+            }
+            else { // Is unchecked, remove value
+
+                const i = f.indexOf(value);
+
+                if (i > -1) {
+
+                    f.splice(i, 1);
+                }
+            }
+            
+            data = { ...this.state.data, [name]: f };
+        }
+        else { // Single value field
+
+            data = { ...this.state.data, [name]: value };
+        }
 
         this.setState({ ...this.state, data });
 
@@ -95,13 +137,31 @@ export default class Form extends Container(ComponentBase) {
         }
     }
 
+    // Adds a record to the array indexed by name
+    addValue(name, record) {
+
+        let value = this.getValue(name);
+
+        if (!value) {
+
+            this.state.data[name] = []; // Create the array
+
+            value = this.getValue(name); // Get the array
+        }
+
+        value.push(record);
+    }
+
     getValue(name) {
 
         const data = this.state.data;
 
-        const value = data ? data[name] || '' : '';
+        return data ? data[name] : null;
+    }
 
-        return value.toString();
+    removeValue(dataProperty, value) {
+
+        this.state.data[dataProperty] = this.state.data[dataProperty].filter(v => !utils.areEqual(v, value));
     }
 
     reset() {

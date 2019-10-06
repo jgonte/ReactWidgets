@@ -3,22 +3,7 @@ import FetchSubmitter from '../../data/submitters/FetchSubmitter';
 import RestUrlBuilder from '../helpers/builders/url/RestUrlBuilder';
 import { Spin } from 'antd';
 
-const buildUrl = (submitUrl, queryParams) => {
-
-    if (!this.urlBuilder) {
-
-        this.urlBuilder = new RestUrlBuilder();
-    }
-
-    return this.urlBuilder.build({
-        url: submitUrl,
-        queryParams
-    });
-};
-
 const AsyncSubmittable = (Base) => class extends Base {
-
-    method = null; // The submit method 'post', 'put', 'delete', etcetera
 
     submitter = null;
 
@@ -114,7 +99,6 @@ const AsyncSubmittable = (Base) => class extends Base {
 
         const {
             submitter,
-            submitUrl,
             loaded,
             state
         } = this;
@@ -124,12 +108,39 @@ const AsyncSubmittable = (Base) => class extends Base {
         const { data } = state;
 
         submitter.submit({
-            submitUrl: this.params ? buildUrl(submitUrl, this.params) : submitUrl, // If there are query parameters, then build the submit URL with those
+            submitUrl: this.buildUrl(),
             method: this.getMethod(loaded),
             data
         });
 
         return true; // In this case for example you can dismiss a dialog, etcetera
+    }
+
+    buildUrl () {
+
+        const {
+            submitUrl,
+            params
+        } = this;
+
+        if (!params) {
+
+            return submitUrl;
+        }
+
+        // If there are query parameters, then build the submit URL with those
+        if (!this.urlBuilder) {
+
+            this.urlBuilder = new RestUrlBuilder();
+        }
+
+        // Unwrap the parameters if it has a single attribute
+        const keys = Object.keys(params);
+
+        return this.urlBuilder.build({
+            url: submitUrl,
+            queryParams: keys.length === 1 ? params[keys[0]] : params
+        });
     }
 
     _onSubmitResponse(response) {
