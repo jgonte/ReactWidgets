@@ -1,5 +1,5 @@
 import TemplateList from './TemplateList';
-import AsyncLoadableCollection from '../../data/mixins/AsyncLoadableCollection';
+import AsyncLoadableCollectionComponent from '../data/mixins/async/AsyncLoadableCollectionComponent';
 
-export default class AsyncLoadableDataList extends AsyncLoadableCollection(TemplateList) {
+export default class AsyncLoadableDataList extends AsyncLoadableCollectionComponent(TemplateList) {
 }

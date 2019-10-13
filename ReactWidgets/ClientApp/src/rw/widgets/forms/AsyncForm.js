@@ -1,34 +1,31 @@
 import Form from './Form';
-import AsyncLoadableSingleItem from '../../data/mixins/AsyncLoadableSingleItem';
-import AsyncSubmittable from '../../data/mixins/AsyncSubmittable';
+import AsyncLoadableSingleItemComponent from '../data/mixins/async/AsyncLoadableSingleItemComponent';
+import AsyncSubmittable from '../../data/mixins/async/AsyncSubmittable';
+import CrudField from '../fields/CrudField';
 
-export default class AsyncForm extends AsyncSubmittable(AsyncLoadableSingleItem(Form)) {
+export default class AsyncForm extends AsyncSubmittable(AsyncLoadableSingleItemComponent(Form)) {
 
-    render() {
+    constructor(props) {
 
-        const {
-            loading,
-            data,
-            error,
-            submitting
-        } = this.state;
+        super(props);
 
-        if (loading) {
+        // Overwrite the render component method if provided in the props
+        if (props.renderComponent) {
 
-            return this.renderLoading();
+            this.renderComponent = props.renderComponent.bind(this);
         }
 
-        if (error) {
+        this._onLoadActions.push(this.loadCrudFields.bind(this));
+    }
 
-            return this.renderError(error);
-        }
+    loadCrudFields() {
 
-        if (submitting) {
+        const crudFields = this.fields.filter(child => child instanceof CrudField);
 
-            return this.renderSubmitting();
-        }
+        crudFields.forEach(crudField => {
 
-        return this.renderComponent(data);
+            crudField.loadableComponent.load();
+        });
     }
 
     onAfterSubmit() {

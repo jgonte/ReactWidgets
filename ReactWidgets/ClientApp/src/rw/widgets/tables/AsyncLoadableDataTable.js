@@ -1,5 +1,5 @@
 import DataTable from './DataTable';
-import AsyncLoadableCollection from '../../data/mixins/AsyncLoadableCollection';
+import AsyncLoadableCollectionComponent from '../data/mixins/async/AsyncLoadableCollectionComponent';
 
-export default class AsyncLoadableDataTable extends AsyncLoadableCollection(DataTable) {
+export default class AsyncLoadableDataTable extends AsyncLoadableCollectionComponent(DataTable) {
 }

@@ -70,7 +70,7 @@ export class FetchData extends Component {
             <AsyncLoadableDataTable
                 columns={columns}
                 loadUrl="api/SampleData/WeatherForecasts"
-                rowKey="id"
+                recordKey="id"
             />
         );
     }

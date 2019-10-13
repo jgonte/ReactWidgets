@@ -1,10 +1,9 @@
 import React from 'react';
 import ComponentBase from '../../ComponentBase';
+import Container from '../mixins/Container';
 import { Modal } from 'antd';
 
-export default class Dialog extends ComponentBase {
-
-    initiallyVisible = false;
+export default class Dialog extends Container(ComponentBase) {
 
     constructor(props) {
 
@@ -32,8 +31,6 @@ export default class Dialog extends ComponentBase {
 
         this.handleOk = this.handleOk.bind(this);
 
-        this.onOk = (props.onOk || this.onOk).bind(this); // Required
-
         this.okText = props.okText || this.okText;
 
         this.okType = props.okType || this.okType;
@@ -45,13 +42,25 @@ export default class Dialog extends ComponentBase {
             this.onCancel = props.onCancel.bind(this);
         }
     }
-    
+
+    componentDidMount() {
+
+        super.componentDidMount();
+
+        this.onOk = (this.props.onOk || this.onOk).bind(this); // Required, it might be set by derived classes, that's why we put it here and not in the constructor
+    }
+
     setParams(params) {
 
         this.params = params;
     }
 
     show() {
+
+        if (this.validate) {
+
+            this.validate();
+        }
 
         if (this.onBeforeShow &&
             this.onBeforeShow() === false) {
@@ -96,44 +105,25 @@ export default class Dialog extends ComponentBase {
         this.hide();
     }
 
-    renderChildren() {
-
-        return this.props.children;
-    }
-
     render() {
 
         const {
             title,
-            initiallyVisible,
             okText,
             okType,
             handleOk,
             handleCancel
         } = this;
 
-        // Hack to allow the modal to mount even when is initially invisible
-        let maskStyle = !initiallyVisible ? { display: 'none' } : undefined;
-
-        let wrapProps = !initiallyVisible ? { style: { display: 'none' } } : undefined;
-
-        let visible = !initiallyVisible ? true : this.state.visible;
-
-        if (!initiallyVisible) {
-
-            this.initiallyVisible = true;
-        }
-
         return (
             <Modal
-                visible={visible}
+                visible={this.state.visible}
                 title={title}
                 okText={okText}
                 okType={okType}
                 onOk={handleOk}
                 onCancel={handleCancel}
-                maskStyle={maskStyle}
-                wrapProps={wrapProps}
+                width={this.props.width || 820}
             >
                 {this.renderChildren()}
             </Modal>

@@ -14,11 +14,13 @@ export default class DateField extends Field {
             style
         } = this.props;
 
+        let fmt = format || 'YYYY-MM-DD HH:mm:ss';
+
         return (
             <DatePicker 
                 name={name}
                 defaultValue={this.getValue() ? moment(this.getValue(), format) : null}
-                format={format}
+                format={fmt}
                 placeholder={placeholder}
                 style={style}
                 onChange={value => this.handleChange({
@@ -26,7 +28,7 @@ export default class DateField extends Field {
                         name: name,
                         type: 'datefield',
                         value: value,
-                        format: format
+                        format: fmt
                     }
                 })}
                 onFocus={this.onFocus}

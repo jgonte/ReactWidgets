@@ -16,6 +16,11 @@ export default class TemplateList extends CollectionDataHandler(ComponentBase) {
 
     renderChildren(data) {
 
+        if (!data) {
+
+            return;
+        }
+
         const {
             template
         } = this.props;

@@ -12,6 +12,10 @@ let timeout;
 
 export default class FilterField extends Component {
 
+    children = [];
+
+    fields = [];
+
     constructor(props) {
 
         super(props);
@@ -34,7 +38,6 @@ export default class FilterField extends Component {
             }
         };
 
-        this.handleChange = this.handleChange.bind(this);
     }
 
     renderOperators() {
@@ -96,21 +99,29 @@ export default class FilterField extends Component {
 
     handleChange(event) { // The scope of this function is the nested field
 
-        const target = event.target;
+        let value;
 
-        const name = target.name;
+        if (event.target) { // It should be an event
 
-        const value = target.type === 'checkbox' ? target.checked : target.value;
+            const target = event.target;
 
-        const data = { ...this.state.data, [name]: value };
+            value = target.type === 'checkbox' ? target.checked : target.value;
+        }
+        else { // Assume the event has a value as some of the Antd fields do
+
+            value = event;
+        }
+        
+        const data = { ...this.state.data, ['value']: value };
 
         this.setState({ ...this.state, data });
 
         const {
-            parent
+            parent,
+            field
         } = this.props;
 
-        const fieldName = this.props.name;
+        const fieldName = field.props.name;
 
         const view = parent.getTargetView();
 

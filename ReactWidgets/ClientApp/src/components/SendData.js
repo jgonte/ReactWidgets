@@ -73,7 +73,7 @@ export class SendData extends React.Component {
                     />
 
                 </LabelledField>
-
+                
                 <LabelledField
                     labelKey="Category"
                     label="Category"

@@ -26,9 +26,9 @@ const Styleable = (Base) => class extends Base {
 
         let height = (style || this.style).height;
 
-        this.style = { 
-            ...this.style, 
-            ...style, 
+        this.style = {
+            ...this.style,
+            ...style,
             width: this.fit ? width || '100%' : width,
             height: this.fit ? width || 'auto' : height
         };
@@ -49,6 +49,6 @@ const Styleable = (Base) => class extends Base {
 
         return cssClass;
     }
-}
+};
 
 export default Styleable;

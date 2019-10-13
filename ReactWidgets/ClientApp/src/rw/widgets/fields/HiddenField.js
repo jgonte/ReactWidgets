@@ -4,7 +4,9 @@ import { Input } from 'antd';
 
 export default class HiddenField extends ComponentBase {
 
-    componentWillMount() {
+    constructor(props) {
+
+        super(props);
 
         if (!this.onChangeHandler) {
 
