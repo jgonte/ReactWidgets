@@ -78,9 +78,7 @@ export default class CollectionLoader extends Loader {
                         throw new Error(`Operator: '${filter.operator}' requires at least one child filter.`);
                     }
 
-                    let qs = filter.filters.map(item => this.buildFilter(item)).join(` ${operator} `); // Recurse
-
-                    return `(${qs})`;
+                    return filter.filters.map(item => this.buildFilter(item)).join(` ${operator} `); // Recurse
                 }
             case 'not':
                 {

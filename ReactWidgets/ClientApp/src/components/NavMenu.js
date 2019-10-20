@@ -47,6 +47,15 @@ const NavMenu = props => (
                 </span>
             </Link>
         </Menu.Item>
+
+        <Menu.Item key="5">
+            <Link to="/tasks">
+                <span>
+                    <Icon type="carry-out" />
+                    Manage Tasks
+                </span>
+            </Link>
+        </Menu.Item>
     </Menu>
 );
 

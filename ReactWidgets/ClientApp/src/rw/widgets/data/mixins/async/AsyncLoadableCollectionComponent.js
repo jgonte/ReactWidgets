@@ -5,11 +5,13 @@ import AsyncLoadableCollection from '../../../../data/mixins/async/AsyncLoadable
 // Adapts the AsyncLoadableCollection to use with ReactJs components
 const AsyncLoadableCollectionComponent = Base => class extends AsyncLoadableCollection(AsyncComponent(Base)) {
 
+    filters = [];
+
     componentDidMount() {
 
         super.componentDidMount();
 
-        if (this.props.autoLoad != false) {
+        if (this.props.autoLoad !== false) {
 
             this.load();
         }
@@ -56,6 +58,28 @@ const AsyncLoadableCollectionComponent = Base => class extends AsyncLoadableColl
                 break;
             default: // Duplicate filter
                 throw new Error(`Duplicate filters for field: '${field}' and operator: '${operator}'.`);
+        }
+
+        // Update the filter to send to the server
+        switch (filters.length) {
+            case 0:
+                {
+                    this.filter = null;
+                }
+                break;
+            case 1:
+                {
+                    this.filter = filters[0];
+                }
+                break;
+            default:
+                {
+                    this.filter = {
+                        operator: 'and',
+                        filters: filters
+                    };
+                }
+                break;
         }
     }
 };
