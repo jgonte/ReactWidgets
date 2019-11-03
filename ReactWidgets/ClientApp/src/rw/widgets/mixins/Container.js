@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Container = (Base) => class extends Base {
+const Container = Base => class extends Base {
 
     children = [];
 

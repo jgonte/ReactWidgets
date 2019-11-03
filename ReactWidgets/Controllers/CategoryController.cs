@@ -41,7 +41,7 @@ namespace ReactWidgets.Controllers
         }
 
         // GET: api/categories/5
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}", Name = "GetCategory")]
         public string Get(int id)
         {
             return "value";

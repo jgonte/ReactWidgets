@@ -3,3 +3,5 @@
 /.vs/config
 /ReactWidgets/ClientApp/package-lock.json
 /ReactWidgets/ClientApp/*.lock
+/.vs/ReactWidgets.Solution/v16/Server/sqlite3
+/.vs/ReactWidgets.Solution

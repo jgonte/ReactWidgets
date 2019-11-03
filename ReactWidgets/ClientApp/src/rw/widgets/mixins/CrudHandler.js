@@ -51,13 +51,15 @@ const CrudHandler = (Base) => class extends Container(Base) {
     renderAddButton() {
 
         return (
-            <Button
-                type="primary"
-                icon="plus"
-                onClick={() => this.createItemDialog.show()}
-            >
-                {this.props.addItemButton.label}
-            </Button>
+            <div style={{ margin: '10px' }}>
+                <Button
+                    type="primary"
+                    icon="plus"
+                    onClick={() => this.createItemDialog.show()}
+                >
+                    {this.props.addItemButton.label}
+                </Button>
+            </div >
         );
     }
 

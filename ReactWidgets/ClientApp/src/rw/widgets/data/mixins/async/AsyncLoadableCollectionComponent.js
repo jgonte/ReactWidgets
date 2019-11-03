@@ -9,54 +9,18 @@ const AsyncLoadableCollectionComponent = Base => class extends AsyncLoadableColl
 
         super.componentDidMount();
 
-        if (this.props.autoLoad != false) {
+        if (this.props.autoLoad !== false) {
 
             this.load();
         }
     }
 
-    updateFilters(field, operator, value) {
+    setFilter(filter) {
 
-        if (!field) {
-
-            throw new Error('Field name is required.');
-        }
-
-        let { filters } = this;
-
-        let selectedFilters = filters.filter(f => f.field === field && f.operator === operator);
-
-        switch (selectedFilters.length) {
-            case 0: { // Filter does not exist
-
-                if (value) {
-
-                    this.filters.push({
-                        field: field,
-                        operator: operator,
-                        value: value
-                    });
-                }
-
-            }
-                break;
-            case 1: { // Update value of existing filter
-
-                if (!value) { // Remove the filter when the value is empty
-
-                    this.filters = filters.filter(f => f.field !== field && f.operator !== operator);
-                }
-                else {
-
-                    let filter = selectedFilters[0];
-
-                    filter.value = value;
-                }
-            }
-                break;
-            default: // Duplicate filter
-                throw new Error(`Duplicate filters for field: '${field}' and operator: '${operator}'.`);
-        }
+        this.setState({
+            ...this.state,
+            filter
+        });
     }
 };
 

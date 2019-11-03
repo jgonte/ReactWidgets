@@ -2,7 +2,7 @@ import LabelledField from './LabelledField';
 import Form from '../forms/Form';
 import validatorFactory from '../validators/ValidatorFactory';
 
-const IField = (Base) => class extends Base {
+const InputField = Base => class extends Base {
 
     validators = [];
 
@@ -16,7 +16,7 @@ const IField = (Base) => class extends Base {
 
         this.validateOnChange = this.validateOnChange || props.validateOnChange;
 
-        this.onChangeHandler = this.findParent(p => p.handleChange);
+        this.onChangeHandler = props.onChangeHandler || this.findParent(p => p.handleChange);
     }
 
     componentDidMount() {
@@ -48,31 +48,57 @@ const IField = (Base) => class extends Base {
         console.log(`Removed field ${this.constructor.name} to change chandler ${this.onChangeHandler.constructor.name}`);
     }
 
-    handleChange(evt) {
+    handleChange(event) {
+
+        let rawValue;
+
+        this.isChanging = true; // Flag to avoid calling on change when the component has not changed
+
+        if (event && event.target) { // It should be an event
+
+            const target = event.target;
+
+            rawValue = target.type === 'checkbox' ? target.checked : target.value;
+        }
+        else { // Assume the event has a value as some of the Antd fields do
+
+            rawValue = event;
+        }
 
         if (this.validateOnChange) {
 
-            this.validate(evt.target);
+            this.validate(rawValue);
         }
 
-        this.notifyChangeHandler(evt);
+        this.notifyChangeHandler(this, rawValue);
+    }
 
-        if (this.onChange) {
+    componentDidUpdate(prevProps, prevState, snapshot) {
 
-            this.onChange(evt);
+        if (this.isChanging && this.props.onChange) {
+
+            this.props.onChange(this);
+
+            this.isChanging = false;
         }
     }
 
-    notifyChangeHandler(evt) {
+    notifyChangeHandler(field, rawValue) {
 
-        this.onChangeHandler.handleChange(evt);
+        this.onChangeHandler.handleChange(field, rawValue);
     }
 
-    getValue() {
+    getRawValue() {
 
         const data = this.onChangeHandler.state.data;
 
         return data ? data[this.props.name] : null;
+    }
+
+    // Gets the value to send to the server
+    getValue() {
+
+        return this.getRawValue();
     }
 
     getForm() {
@@ -97,7 +123,7 @@ const IField = (Base) => class extends Base {
             labelledField.setValidation('', '', false);
         }
 
-        const value = target ? target.value : this.getValue();
+        const value = target ? target.value : this.getRawValue();
 
         for (let i = 0; i < validators.length; ++i) {
 
@@ -120,4 +146,4 @@ const IField = (Base) => class extends Base {
     }
 };
 
-export default IField;
+export default InputField;

@@ -7,16 +7,6 @@ export default class Pager extends Component {
 
         super(props);
 
-        const {
-            pageIndex,
-            pageSize
-        } = props;
-
-        this.state = {
-            pageIndex,
-            pageSize
-        };
-
         this.onPageIndexChanged = this.onPageIndexChanged.bind(this);
 
         this.onPageSizeChanged = this.onPageSizeChanged.bind(this);
@@ -25,37 +15,27 @@ export default class Pager extends Component {
     onPageIndexChanged(pageIndex) {
         
         const {
-            pagedView
+            pagedView,
+            pageSize
         } = this.props;
 
-        const {
-            pageSize
-        } = this.state;
-
         pagedView.paginate(pageIndex, pageSize);
-
-        this.setState({ ...this.state, pageIndex});
     }
 
-    onPageSizeChanged(pageSize) {
+    onPageSizeChanged(pageIndex, pageSize) {
 
         const {
             pagedView
         } = this.props;
 
         pagedView.paginate(1, pageSize); // Reset to the first page
-
-        this.setState({ ...this.state, pageIndex: 1, pageSize});
     }
 
     render() {
 
         const {
             pageIndex,
-            pageSize
-        } = this.state;
-
-        const {
+            pageSize,
             totalRecords
         } = this.props;
 
@@ -67,6 +47,7 @@ export default class Pager extends Component {
                 total={totalRecords}
                 showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
                 showSizeChanger
+                pageSizeOptions={['10', '25', '50']}
                 onChange={this.onPageIndexChanged}
                 onShowSizeChange={this.onPageSizeChanged}
             />

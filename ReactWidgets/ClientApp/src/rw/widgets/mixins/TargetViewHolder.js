@@ -1,7 +1,7 @@
 // Holds a reference to a target view
 import componentManager from '../../componentManager';
 
-const TargetViewHolder = (Base) => class extends Base {
+const TargetViewHolder = Base => class extends Base {
 
     targetViewId = '';
 

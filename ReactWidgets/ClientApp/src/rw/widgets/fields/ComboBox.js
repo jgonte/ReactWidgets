@@ -32,6 +32,7 @@ export default class ComboBox extends DataHandler(Field) {
             placeholder,
             disabled,
             defaultValue,
+            allowClear,
             style
         } = this.props;
 
@@ -54,6 +55,7 @@ export default class ComboBox extends DataHandler(Field) {
                 onFocus={this.onFocus}
                 onBlur={this.onBlur}
                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                allowClear={allowClear}
             >
                 {this.renderChildren(data)}
             </Select>
@@ -89,7 +91,9 @@ export default class ComboBox extends DataHandler(Field) {
         }
 
         return data.map(record =>
-            <Option key={record[valueProperty]} value={record[valueProperty].toString()}>{record[textProperty]}</Option>
+            <Option key={record[valueProperty]} value={record[valueProperty].toString()}>
+                {record[textProperty]}
+            </Option>
         );
     }
 }

@@ -14,42 +14,46 @@ const Pageable = (Base) => class extends Base {
             this.pageable = props.pageable;
         }
 
-        this.state = { ...this.state, pageIndex: 1, pageSize: 10 };
+        this.state = {
+            ...this.state,
+            currentPage: 1,
+            pageSize: 10
+        };
     }
 
     renderPager() {
 
-        if (!this.pageable) {
+        const {
+            data,
+            currentPage,
+            pageSize,
+            totalCount,
+            totalPages
+        } = this.state;
+
+        if (!this.pageable || !data.length) {
 
             return;
         }
-
-        const {
-            pageIndex,
-            pageSize
-        } = this.state;
-
-        const metadata = this.metadata || {};
-
-        const {
-            totalPages,
-            totalRecords
-        } = metadata;
-
+        
         return (
             <Pager
                 pagedView={this}
-                pageIndex={pageIndex}
+                pageIndex={currentPage}
                 pageSize={pageSize}
-                totalRecords={totalRecords}
+                totalRecords={totalCount}
                 totalPages={totalPages}
             />
         );
     }
 
-    paginate(pageIndex, pageSize) {
+    paginate(currentPage, pageSize) {
 
-        this.state = { ...this.state, pageIndex, pageSize };
+        this.state = {
+            ...this.state,
+            currentPage,
+            pageSize
+        };
 
         this.updateData();
     }

@@ -8,7 +8,34 @@ const { Component } = React;
 
 const InputGroup = Input.Group;
 
-let timeout;
+const texts = {
+    // Comparison operators
+    'eq': 'Equals',
+    'ne': 'Not equals',
+    'gt': 'Greater than',
+    'ge': 'Greater than or equals',
+    'lt': 'Less than',
+    'le': 'Less than or equals',
+    // Logical operators
+    'not': 'Not',
+    'and': 'And',
+    'or': 'Or',
+    // String functions
+    'contains': 'Contains',
+    'startswith': 'Starts with',
+    'endswith': 'Ends with'
+};
+
+const getText = operator => {
+    const text = texts[operator];
+
+    if (!text) {
+
+        throw new Error(`Text not found for operator: '${operator}'`)
+    }
+
+    return text;
+};
 
 export default class FilterField extends Component {
 
@@ -20,31 +47,35 @@ export default class FilterField extends Component {
 
         super(props);
 
-        let operator = 'equals';
-
         const {
-            operators
+            operators // The operators to choose from in the combo box
         } = props;
 
-        if (operators && operators.length === 1) {
+        let {
+            selectedOperator // The selected operator
+        } = props;
 
-            operator = operators[0];
+        if (operators && operators.length && !selectedOperator) { // Select the first if none was selected
+
+            selectedOperator = operators[0];
         }
 
         this.state = {
+            ...this.state,
             data: {
-                operator: operator,
-                operators: operators
+                operator: selectedOperator
             }
         };
-
     }
 
     renderOperators() {
 
-        let {
-            operator,
+        const {
             operators
+        } = this.props;
+
+        let {
+            operator
         } = this.state.data;
 
         if (operators) {
@@ -54,16 +85,16 @@ export default class FilterField extends Component {
             if (operators.length === 1) {
 
                 disabled = true;
-
-                operator = operators[0];
             }
+
+            const data = this.operatorsToOptions(operators);
 
             return (
                 <ComboBox
                     name="operator"
                     style={{ width: '50%' }}
                     defaultValue={operator}
-                    data={this.operatorsToOptions(operators)}
+                    data={data}
                     placeholder="Select an operator"
                     disabled={disabled}
                     parent={this}
@@ -78,7 +109,7 @@ export default class FilterField extends Component {
 
             return {
                 value: operator,
-                text: operator
+                text: getText(operator)
             };
         });
     }
@@ -86,56 +117,64 @@ export default class FilterField extends Component {
     renderField() {
 
         const {
+            parent: filterPanel,
             field
         } = this.props;
 
         return React.cloneElement(field, {
-            name: 'value',
+            name: field.props.name, // Set the same name as the parent
             style: { width: '50%' },
             parent: this,
-            handleChange: this.handleChange
+            onChangeHandler: filterPanel,
+            onChange: this.onChange
         });
     }
 
-    handleChange(event) { // The scope of this function is the nested field
+    // Handles the change of value of the operator
+    handleChange(field, rawValue) {
 
-        let value;
+        const data = {
+            ...this.state.data,
+            operator: rawValue
+        };
 
-        if (event.target) { // It should be an event
+        this.setState({
+            ...this.state,
+            data
+        });
 
-            const target = event.target;
+        // Trigger onChange only if the value of the filter field is not empty, since changing operatos with empty values should not change the filter
+        const valueField = this.children[1];
 
-            value = target.type === 'checkbox' ? target.checked : target.value;
+        const value = valueField.getValue();
+
+        if (value) { // The first child is the operator combo box
+
+            const {
+                name,
+                parent: filterField
+            } = valueField.props;
+
+            var filterPanel = filterField.props.parent;
+
+            filterPanel.updateFilter(name, data.operator, value);
         }
-        else { // Assume the event has a value as some of the Antd fields do
+    }
 
-            value = event;
-        }
-        
-        const data = { ...this.state.data, ['value']: value };
-
-        this.setState({ ...this.state, data });
+    onChange(field) {
 
         const {
-            parent,
-            field
-        } = this.props;
+            name,
+            parent: filterField
+        } = field.props;
 
-        const fieldName = field.props.name;
+        var filterPanel = filterField.props.parent;
 
-        const view = parent.getTargetView();
+        var operator = filterField.state.data.operator;
 
-        const {
-            operator
-        } = this.state.data;
+        var value = field.getValue();
 
-        clearTimeout(timeout);
-
-        timeout = setTimeout(() => {
-            view.updateFilters(fieldName, operator, value);
-
-            view.updateData();
-        }, 1500);
+        filterPanel.updateFilter(name, operator, value);
     }
 
     render() {

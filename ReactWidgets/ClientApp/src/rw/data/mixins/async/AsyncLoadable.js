@@ -61,7 +61,8 @@ const AsyncLoadable = Base => class extends Base {
                 ...this.state,
                 data: data.payload,
                 loading: false,
-                loadingError: null
+                loadingError: null,
+                ...this.metadata.pagination
             });
         }
 
@@ -82,7 +83,6 @@ const AsyncLoadable = Base => class extends Base {
 
             this._setState({
                 ...this.state,
-                data: {},
                 loading: false,
                 loadingError: error
             });

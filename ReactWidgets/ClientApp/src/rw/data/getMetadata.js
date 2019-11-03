@@ -9,10 +9,13 @@
     //     return JSON.parse(header);
     // }
 
-    const payload = response.payload || []; // Payload might be nill when there is no data loaded
+    const payload = response.payload || []; // Payload might be nil when there is no data loaded
+
+    const paginationHeader = headers.get('X-Pagination');
 
     return {
         eTag: headers.get('ETag'),
-        totalRecords: payload.length
+        pagination: paginationHeader ? JSON.parse(paginationHeader) : {},
+        records: payload.length
     };
 }

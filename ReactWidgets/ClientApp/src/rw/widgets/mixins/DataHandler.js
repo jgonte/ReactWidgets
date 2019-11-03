@@ -4,7 +4,10 @@ const DataHandler = (Base) => class extends Base {
     // Sets the data programmatically
     setData(data) {
 
-        this.setState({ ...this.state, data });
+        this.setState({
+            ...this.state,
+            data
+        });
     }
 
     render() {

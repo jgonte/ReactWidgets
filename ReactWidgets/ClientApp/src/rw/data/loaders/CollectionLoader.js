@@ -1,3 +1,6 @@
+import ComparisonOperators from '../ComparisonOperators';
+import LogicalOperators from '../LogicalOperators';
+import StringFunctions from '../StringFunctions';
 import Loader from './Loader';
 
 // Loader of a collection of items using OData specifications
@@ -14,7 +17,7 @@ export default class CollectionLoader extends Loader {
             qs.push(`$top=${cfg.top}`);
         }
 
-        if (cfg.skip) {
+        if (cfg.skip || cfg.skip === 0) {
 
             qs.push(`$skip=${cfg.skip}`);
         }
@@ -67,8 +70,8 @@ export default class CollectionLoader extends Loader {
         const operator = filter.operator.trim().toLowerCase();
 
         switch (operator) {
-            case 'and':
-            case 'or':
+            case LogicalOperators.And:
+            case LogicalOperators.Or:
                 {
                     let filters = filter.filters;
 
@@ -78,11 +81,9 @@ export default class CollectionLoader extends Loader {
                         throw new Error(`Operator: '${filter.operator}' requires at least one child filter.`);
                     }
 
-                    let qs = filter.filters.map(item => this.buildFilter(item)).join(` ${operator} `); // Recurse
-
-                    return `(${qs})`;
+                    return filter.filters.map(item => this.buildFilter(item)).join(` ${operator} `); // Recurse
                 }
-            case 'not':
+            case LogicalOperators.Not:
                 {
                     // TODO: Add checking for invalid parameters. In this case it must only be operator and one filter
 
@@ -92,14 +93,14 @@ export default class CollectionLoader extends Loader {
 
                     return `${operator} ${this.buildFilter(filter.filter)}`; // Recurse
                 }
-            case 'eq': // equal
-            case 'ne': // not equal
-            case 'lt': // less
-            case 'le': // less or equal
-            case 'gt': // greater
-            case 'ge': // greater or equal
+            case ComparisonOperators.IsEqual:
+            case ComparisonOperators.IsNotEqual:
+            case ComparisonOperators.IsGreaterThan:
+            case ComparisonOperators.IsGreaterThanOrEqual:
+            case ComparisonOperators.IsLessThan:
+            case ComparisonOperators.IsLessThanOrEqual:
                 {
-                    if (!filter.field) {
+                    if (!filter.fieldName) {
 
                         throw new Error(`Operator: '${filter.operator}' requires a field.`);
                     }
@@ -109,18 +110,20 @@ export default class CollectionLoader extends Loader {
                         throw new Error(`Operator: '${filter.operator}' requires a value.`);
                     }
 
-                    return `${filter.field} ${operator} ${filter.value instanceof Number ? filter.value : `'${filter.value}'`}`;
+                    return `${filter.fieldName} ${operator} ${filter.value instanceof Number ? filter.value : `'${filter.value}'`}`;
                 }
-            case 'in': // in
-            case 'ni': // not in
-            case 'bw': // begins with
-            case 'bn': // does not begin with
-            case 'ew': // ends with
-            case 'en': // does not end with
-            case 'contains': // contains
+            // case 'in': // in
+            // case 'ni': // not in
+            // case 'bw': // begins with
+            // case 'bn': // does not begin with
+            // case 'ew': // ends with
+            // case 'en': // does not end with
             //case 'nc': // does not contain
+            case StringFunctions.Contains:
+            case StringFunctions.StartsWith:
+            case StringFunctions.EndsWith:
                 {
-                    if (!filter.field) {
+                    if (!filter.fieldName) {
 
                         throw new Error(`Operator: '${filter.operator}' requires a field.`);
                     }
@@ -130,19 +133,19 @@ export default class CollectionLoader extends Loader {
                         throw new Error(`Operator: '${filter.operator}' requires a value.`);
                     }
 
-                    return `${operator}(${filter.field}, ${filter.value instanceof Number ? filter.value : `'${filter.value}'`})`;
+                    return `${operator}(${filter.fieldName}, ${filter.value instanceof Number ? filter.value : `'${filter.value}'`})`;
                 }
 
-            case 'nu': // is null
-            case 'nn': // is not null
-                {
-                    if (!filter.field) {
+            // case 'nu': // is null
+            // case 'nn': // is not null
+            //     {
+            //         if (!filter.fieldName) {
 
-                        throw new Error(`Operator: '${filter.operator}' requires a field.`);
-                    }
+            //             throw new Error(`Operator: '${filter.operator}' requires a field.`);
+            //         }
 
-                    return `${filter.field} ${operator}`;
-                }
+            //         return `${filter.fieldName} ${operator}`;
+            //     }
 
             default: throw new Error(`Unknown operator: '${filter.operator}' in filter.`);
         }
@@ -151,7 +154,7 @@ export default class CollectionLoader extends Loader {
     buildOrderBy(sorters) {
 
         return (sorters && sorters.length) ?
-            `$orderby=${sorters.map(item => `${item.field} ${item.order === 'desc' ? 'desc' : 'asc'}`).join(', ')}` :
+            `$orderby=${sorters.map(item => `${item.fieldName} ${item.order === 'descend' ? 'desc' : 'asc'}`).join(', ')}` :
             null;
     }
 }

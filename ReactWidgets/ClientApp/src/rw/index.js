@@ -50,6 +50,8 @@ export { default as CrudField } from './widgets/fields/CrudField';
 // Filters
 export { default as FilterPanel } from './widgets/filters/FilterPanel';
 export { default as FilterField } from './widgets/filters/FilterField';
+export { default as ComparisonOperators } from './data/ComparisonOperators';
+export { default as StringFunctions } from './data/StringFunctions';
 
 // Dialogs
 export { default as Dialog } from './widgets/dialogs/Dialog';

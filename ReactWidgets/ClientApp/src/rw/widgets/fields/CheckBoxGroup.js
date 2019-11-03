@@ -1,9 +1,9 @@
 ﻿import React from 'react';
 import ComponentBase from '../../ComponentBase';
 import Container from '../mixins/Container';
-import IField from './IField';
+import InputField from './InputField';
 
-export default class CheckBoxGroup extends IField(Container(ComponentBase)) {
+export default class CheckBoxGroup extends InputField(Container(ComponentBase)) {
 
     fields = [];
 

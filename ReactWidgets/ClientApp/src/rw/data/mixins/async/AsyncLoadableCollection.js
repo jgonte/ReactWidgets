@@ -4,6 +4,7 @@ import CollectionLoader from '../../../data/loaders/CollectionLoader';
 const AsyncLoadableCollection = Base => class extends AsyncLoadable(Base) {
 
     state = {
+        ...this.state,
         data: []
     };
 
@@ -22,14 +23,39 @@ const AsyncLoadableCollection = Base => class extends AsyncLoadable(Base) {
 
         this.onLoaderLoading();
 
+        const {
+            currentPage,
+            pageSize,
+            filter,
+            sorters
+        } = this.state;
+
         await this.loader.load({
-            top: this.top,
-            skip: this.skip,
+            top: pageSize,
+            skip: pageSize * (currentPage - 1),
             select: this.select,
-            filter: this.filter,
-            orderby: this.orderby,
+            filter: filter,
+            sorters: sorters,
             params: this.params
         });
+    }
+
+    updateData() {
+
+        //if (this.requiresRefresh) {
+
+        this.load();
+        //}
+        //else {
+
+        //    const {
+        //        state
+        //    } = this;
+
+        //    const data = this.updateDataLocally(this.cachedData); // Process the data locally
+
+        //    this.setState({ ...state, data: data, loading: false, error: null }); // Update state
+        //}
     }
 };
 

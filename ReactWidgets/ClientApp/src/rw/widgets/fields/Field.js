@@ -1,5 +1,5 @@
 import ComponentBase from '../../ComponentBase';
-import IField from './IField';
+import InputField from './InputField';
 
-export default class Field extends IField(ComponentBase) {
+export default class Field extends InputField(ComponentBase) {
 }
