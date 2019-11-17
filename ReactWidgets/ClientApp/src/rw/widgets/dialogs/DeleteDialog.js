@@ -1,6 +1,5 @@
-import React from 'react';
 import Dialog from './Dialog';
-import { Alert } from 'antd';
+import utils from '../../utils';
 
 export default class DeleteDialog extends Dialog {
 
@@ -12,32 +11,18 @@ export default class DeleteDialog extends Dialog {
 
     okType = 'danger';
 
+    type = 'warning';
+
+    width = 416;
+
     renderConfirm() {
 
-        const { confirm } = this.props;
-
-        const params = this.params;
-
-        if (params && confirm.indexOf('{{params}}') > -1) { // Replace with the value
-
-            const keys = Object.keys(params);
-
-            return confirm.replace(/{{params}}/g,
-                keys.length === 1 ? params[keys[0]] : JSON.stringify(params)
-            );
-        }
-
-        return confirm;
+        return utils.template(this.props.confirm, this.params).text;
     }
 
     renderChildren() {
 
-        return (
-            <Alert
-                message={this.renderConfirm()}
-                type="warning"
-            />
-        );
+        return this.renderConfirm();
     }
 
     validate() {

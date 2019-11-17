@@ -2,6 +2,7 @@ import ComparisonOperators from '../ComparisonOperators';
 import LogicalOperators from '../LogicalOperators';
 import StringFunctions from '../StringFunctions';
 import Loader from './Loader';
+import utils from '../../utils';
 
 // Loader of a collection of items using OData specifications
 export default class CollectionLoader extends Loader {
@@ -43,16 +44,28 @@ export default class CollectionLoader extends Loader {
             qs.push(orderBy);
         }
 
-        const params = this.buildParams(cfg.params);
+        let url;
 
-        if (params) {
+        if (cfg.params) {
 
-            qs.push(params);
+            const prms = utils.buildParams(this.url, cfg.params);
+
+            if (prms.params) {
+
+                qs.push(prms.params);
+            }
+
+            if (prms.url) {
+
+                url = prms.url;
+            }
         }
 
+        url = url || this.url;
+
         return qs.length ?
-            `${this.url}?${qs.join('&')}` :
-            this.url;
+            `${url}?${qs.join('&')}` :
+            url;
     }
 
     buildFilter(filter) {

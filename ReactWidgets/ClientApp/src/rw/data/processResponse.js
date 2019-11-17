@@ -27,11 +27,29 @@ export default function processResponse(loaderOrSubmitter, response) {
                 payload: null
             });
         }
-        else {
-            response.json().then(data => loaderOrSubmitter.onData({
-                headers: response.headers,
-                payload: data
-            }));
+        else { // The server may return either an empty response or a response on any format
+
+            response.text().then(text => {
+
+                let data = null;
+
+                if (text) {
+
+                    try {
+
+                        data = JSON.parse(text);
+                    }
+                    catch (err) {
+
+                        data = text;
+                    }
+                }
+
+                loaderOrSubmitter.onData({
+                    headers: response.headers,
+                    payload: data
+                });
+            });
         }
     }
 }

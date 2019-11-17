@@ -35,7 +35,7 @@ const AsyncSubmittable = Base => class extends Base {
         this.submitter.onError = this.onSubmitError.bind(this);
     }
 
-    async submit() {
+    submit() {
 
         if (this.onBeforeSubmit &&
             !this.onBeforeSubmit()) {
@@ -52,9 +52,10 @@ const AsyncSubmittable = Base => class extends Base {
             });
         }
 
-        await this.submitter.submit({
+        this.submitter.submit({
             method: this.getMethod(),
-            data: this.state.data
+            data: this.state.data,
+            params: this.params
         });
 
         return true; // In this case for example you can dismiss a dialog, etcetera
@@ -79,11 +80,6 @@ const AsyncSubmittable = Base => class extends Base {
         if (this.onAfterSubmit) {
 
             this.onAfterSubmit(response);
-        }
-
-        if (this.onSubmitResponse) {
-
-            this.onSubmitResponse(response);
         }
     }
 

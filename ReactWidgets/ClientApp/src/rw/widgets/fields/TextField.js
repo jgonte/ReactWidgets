@@ -9,12 +9,14 @@ export default class TextField extends Field {
         const {
             name,
             placeholder,
+            disabled,
             style
         } = this.props;
 
         return (
             <Input
                 name={name}
+                disabled={disabled}
                 value={this.getValue()}
                 placeholder={placeholder}
                 style={style}

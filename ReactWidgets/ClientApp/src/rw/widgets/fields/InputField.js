@@ -70,7 +70,7 @@ const InputField = Base => class extends Base {
             this.validate(rawValue);
         }
 
-        this.notifyChangeHandler(this, rawValue);
+        this.notifyChangeHandler(rawValue);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -83,9 +83,9 @@ const InputField = Base => class extends Base {
         }
     }
 
-    notifyChangeHandler(field, rawValue) {
+    notifyChangeHandler(rawValue) {
 
-        this.onChangeHandler.handleChange(field, rawValue);
+        this.onChangeHandler.handleChange(this, rawValue);
     }
 
     getRawValue() {
@@ -106,7 +106,7 @@ const InputField = Base => class extends Base {
         return this.findParent(p => p instanceof Form);
     }
 
-    validate(target) {
+    validate(value) {
 
         const validators = this.validators;
 
@@ -116,14 +116,11 @@ const InputField = Base => class extends Base {
             return;
         }
 
+        this.resetValidation();
+
+        value = value || this.getRawValue();
+
         const labelledField = this.findParent(p => p instanceof LabelledField, false); // Do not throw if not found
-
-        if (labelledField) { // Reset any error
-
-            labelledField.setValidation('', '', false);
-        }
-
-        const value = target ? target.value : this.getRawValue();
 
         for (let i = 0; i < validators.length; ++i) {
 
@@ -142,6 +139,17 @@ const InputField = Base => class extends Base {
 
                 return message; // One failed validation only per field, if a message exists, then the validation has field
             }
+        }
+    }
+
+    // Clears the error messages from the input
+    resetValidation() {
+
+        const labelledField = this.findParent(p => p instanceof LabelledField, false); // Do not throw if not found
+
+        if (labelledField) {
+
+            labelledField.setValidation('', '', false);
         }
     }
 };

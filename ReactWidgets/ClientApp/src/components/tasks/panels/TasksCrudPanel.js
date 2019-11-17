@@ -2,7 +2,7 @@
 import TasksTable from '../tables/TasksTable';
 import CreateTaskDialog from '../dialogs/CreateTaskDialog';
 import UpdateTaskDialog from '../dialogs/UpdateTaskDialog';
-//import DeleteTaskDialog from '../dialogs/DeleteTaskDialog';
+import DeleteTaskDialog from '../dialogs/DeleteTaskDialog';
 import { CrudPanel } from '../../../rw';
 
 export default function TasksCrudPanel() {
@@ -21,7 +21,9 @@ export default function TasksCrudPanel() {
             updateItemDialog={
                 <UpdateTaskDialog />
             }
-            
+            deleteItemDialog={
+                <DeleteTaskDialog />
+            }
         />
     );
 }

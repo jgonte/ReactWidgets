@@ -11,8 +11,8 @@ const UpdateTaskForm = props => (
         {...props}
         id="updateTaskForm"
         autoLoad={false}
-        loadUrl={'api/tasks'}
-        submitUrl={'api/tasks'}
+        loadUrl="api/tasks/{{id}}"
+        submitUrl="api/tasks"
     >
 
         <LabelledField label="Id">

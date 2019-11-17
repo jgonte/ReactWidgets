@@ -19,7 +19,18 @@ const AsyncLoadableCollection = Base => class extends AsyncLoadable(Base) {
         this.onLoaderCreated();
     }
 
-    async load() {
+    load() {
+
+        if (!this.loader) {
+
+            throw new Error('Loader must be configured');
+        }
+
+        if (this.onBeforeLoad &&
+            this.onBeforeLoad() === false) {
+
+            return;
+        }
 
         this.onLoaderLoading();
 
@@ -30,7 +41,7 @@ const AsyncLoadableCollection = Base => class extends AsyncLoadable(Base) {
             sorters
         } = this.state;
 
-        await this.loader.load({
+        this.loader.load({
             top: pageSize,
             skip: pageSize * (currentPage - 1),
             select: this.select,

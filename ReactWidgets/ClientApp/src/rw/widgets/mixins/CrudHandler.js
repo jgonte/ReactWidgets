@@ -5,9 +5,18 @@ import { Button } from 'antd';
 // Connect dialogs to the component to perform CRUD operations
 const CrudHandler = (Base) => class extends Container(Base) {
 
+    isAddable = () => this.props.createItemDialog;
+
     isEditable = () => this.props.updateItemDialog;
 
+    isDeletable = () => this.props.deleteItemDialog;
+
     render() {
+
+        if (!this.props.loadableComponent) {
+
+            throw new Error('Loadable component is required');
+        }
 
         const loadableComponent = React.cloneElement(
             this.props.loadableComponent,
@@ -18,48 +27,51 @@ const CrudHandler = (Base) => class extends Container(Base) {
             }
         );
 
-        const createItemDialog = React.cloneElement(
-            this.props.createItemDialog,
-            {
-                parent: this,
-                itemId: 'createItemDialog'
-            }
-        );
-
-
-        const deleteItemDialog = this.props.deleteItemDialog ?
-            React.cloneElement(
-                this.props.deleteItemDialog,
-                {
-                    parent: this,
-                    itemId: 'deleteItemDialog'
-                }
-            ) :
-            null;
-
         return (
             <div>
                 {this.renderAddButton()}
                 {loadableComponent}
-                {createItemDialog}
+                {this.renderAddItemDialog()}
                 {this.renderEditItemDialog()}
-                {deleteItemDialog}
+                {this.renderDeleteItemDialog()}
             </div>
         );
     }
 
     renderAddButton() {
 
+        if (!this.isAddable()) {
+
+            return null;
+        }
+
         return (
             <div style={{ margin: '10px' }}>
                 <Button
                     type="primary"
-                    icon="plus"
+                    ghost
+                    icon="plus-circle"
                     onClick={() => this.createItemDialog.show()}
                 >
                     {this.props.addItemButton.label}
                 </Button>
             </div >
+        );
+    }
+
+    renderAddItemDialog() {
+
+        if (!this.isAddable()) {
+
+            return null;
+        }
+
+        return React.cloneElement(
+            this.props.createItemDialog,
+            {
+                parent: this,
+                itemId: 'createItemDialog'
+            }
         );
     }
 
@@ -88,6 +100,22 @@ const CrudHandler = (Base) => class extends Container(Base) {
         dialog.setParams(params);
 
         dialog.show();
+    }
+
+    renderDeleteItemDialog() {
+
+        if (!this.isDeletable()) {
+
+            return null;
+        }
+
+        return React.cloneElement(
+            this.props.deleteItemDialog,
+            {
+                parent: this,
+                itemId: 'deleteItemDialog'
+            }
+        );
     }
 
     showDeleteDialog(record) {
@@ -124,6 +152,8 @@ const CrudHandler = (Base) => class extends Container(Base) {
                 key: 'edit',
                 render: (text, record) => (
                     <Button
+                        type="primary"
+                        ghost
                         icon="edit"
                         onClick={() => this.showEditDialog(record)}
                     >
@@ -133,18 +163,23 @@ const CrudHandler = (Base) => class extends Container(Base) {
             });
         }
 
-        actionColumns.push({
-            name: 'delete',
-            key: 'delete',
-            render: (text, record) => (
-                <Button
-                    icon="delete"
-                    onClick={() => this.showDeleteDialog(record)}
-                >
-                    Delete
+        if (this.isDeletable()) {
+
+            actionColumns.push({
+                name: 'delete',
+                key: 'delete',
+                render: (text, record) => (
+                    <Button
+                        type="danger"
+                        ghost
+                        icon="delete"
+                        onClick={() => this.showDeleteDialog(record)}
+                    >
+                        Delete
                     </Button>
-            )
-        });
+                )
+            });
+        }
 
         return actionColumns;
     }

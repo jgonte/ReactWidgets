@@ -10,7 +10,7 @@ const UpdateTaskDialog = props => (
         form={
             <UpdateTaskForm />
         }
-        message="Task with id: '{{params}}' was successfully updated"
+        message="Task with id: '{{id}}' was successfully updated"
     />
 );
 

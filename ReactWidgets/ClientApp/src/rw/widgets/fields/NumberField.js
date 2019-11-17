@@ -8,12 +8,14 @@ export default class NumberField extends Field {
 
         const {
             name,
+            disabled,
             placeholder
         } = this.props;
 
         return (
             <InputNumber
                 name={name}
+                disabled={disabled}
                 value={this.getValue()}
                 placeholder={placeholder}
                 onChange={this.handleChange}

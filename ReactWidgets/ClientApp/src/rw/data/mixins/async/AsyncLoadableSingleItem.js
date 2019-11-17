@@ -4,6 +4,7 @@ import SingleItemLoader from '../../../data/loaders/SingleItemLoader';
 const AsyncLoadableSingleItem = Base => class extends AsyncLoadable(Base) {
 
     state = {
+        ...this.state,
         data: {}
     };
 
@@ -21,16 +22,22 @@ const AsyncLoadableSingleItem = Base => class extends AsyncLoadable(Base) {
         }
     }
 
-    async load() {
+    load() {
 
         if (!this.loader) {
 
             throw new Error('Loader must be configured');
         }
 
+        if (this.onBeforeLoad &&
+            this.onBeforeLoad() === false) {
+
+            return;
+        }
+
         this.onLoaderLoading();
 
-        await this.loader.load({
+        this.loader.load({
             select: this.select,
             params: this.params
         });

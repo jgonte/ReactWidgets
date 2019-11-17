@@ -32,15 +32,15 @@ export default class Loader {
         return headers;
     }
 
-    async load(cfg) {
+    load(cfg) {
 
-        await this.fetch({
+        this.fetch({
             headers: this.buildHeaders(cfg),
             url: this.buildUrl(cfg)
         });
     }
 
-    async fetch(cfg) {
+    fetch(cfg) {
 
         let headers = new Headers();
 
@@ -49,7 +49,7 @@ export default class Loader {
             cfg.headers.forEach((header) => headers.append(header.key, header.value));
         }
 
-        await fetch(cfg.url,
+        fetch(cfg.url,
             {
                 headers: headers
             })
@@ -66,25 +66,5 @@ export default class Loader {
         return fields && fields.length ?
             fields.join(',') :
             null;
-    }
-
-    // Builds the URL with the other parameters passed as an objects
-    buildParams(params) {
-
-        if (!params) {
-
-            return null;
-        }
-
-        var keys = Object.keys(params);
-
-        if (!keys.length) {
-
-            return null;
-        }
-
-        return keys
-            .map(k => `${k}=${params[k]}`)
-            .join('&');
     }
 }

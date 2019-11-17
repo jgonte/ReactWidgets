@@ -9,6 +9,11 @@ const AsyncLoadable = Base => class extends Base {
 
         super(cfg);
 
+        if (cfg.onBeforeLoad) {
+
+            this.onBeforeLoad = cfg.onBeforeLoad.bind(this);
+        }
+
         if (cfg.onLoading) {
 
             this.onLoading = cfg.onLoading.bind(this);
@@ -52,6 +57,8 @@ const AsyncLoadable = Base => class extends Base {
 
     // Handles the loaded data in two ways, using _setState or onLoadData
     onLoaderData(data) {
+
+        this.loaded = true;
 
         this.metadata = getMetadata(data);
 

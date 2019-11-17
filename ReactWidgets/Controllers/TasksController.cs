@@ -12,24 +12,29 @@ namespace ReactWidgets.Controllers
     [ApiController]
     public class TasksController : ControllerBase
     {
-        private List<Task> _tasks = new List<Task>();
+        private static readonly List<Task> _tasks = new List<Task>();
+
+        private static int _nextId;
 
         public TasksController()
         {
-            var key = 0;
-
-            var length = 100;
-
-            for (int i = 0; i < length; ++i)
+            if (!_tasks.Any())
             {
-                _tasks.Add(new Task
+                _nextId = 0;
+
+                var length = 100;
+
+                for (int i = 0; i < length; ++i)
                 {
-                    Id = ++key,
-                    Title = $"Task title {key}",
-                    Completed = i % 2 == 0,
-                    Schedule = DateTime.Now.AddDays(i),
-                    Order = key
-                });
+                    _tasks.Add(new Task
+                    {
+                        Id = ++_nextId,
+                        Title = $"Task title {_nextId}",
+                        Completed = i % 2 == 0,
+                        Schedule = DateTime.Now.AddDays(i),
+                        Order = _nextId
+                    });
+                }
             }
         }
 
@@ -58,29 +63,66 @@ namespace ReactWidgets.Controllers
             return tasks;
         }
 
-        // GET: api/Tasks/5
-        [HttpGet("{id}", Name = "GetTask")]
-        public string Get(int id)
+        // GET: api/tasks/5
+        [HttpGet("{id}", Name = "TaskGetById")]
+        public IActionResult Get(int id)
         {
-            return "value";
+            var task = _tasks.SingleOrDefault(t => t.Id == id);
+
+            return task == null ?
+                (IActionResult)NotFound() :
+                Ok(task);
         }
 
-        // POST: api/Tasks
+        // POST: api/tasks
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] Task task)
         {
+            task.Id = ++_nextId;
+
+            _tasks.Add(task);
+
+            return CreatedAtRoute("TaskGetById", new
+            {
+                id = task.Id
+            }, new
+            {
+                id = task.Id
+            });
         }
 
-        // PUT: api/Tasks/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // PUT: api/tasks
+        [HttpPut()]
+        public IActionResult Put([FromBody] Task task)
         {
+            var tsk = _tasks.SingleOrDefault(t => t.Id == task.Id);
+
+            if (tsk == null)
+            {
+                return NotFound();
+            }
+
+            _tasks.Remove(tsk);
+
+            _tasks.Insert(task.Id, task);
+
+            return NoContent();
         }
 
-        // DELETE: api/ApiWithActions/5
+        // DELETE: api/tasks/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            var task = _tasks.SingleOrDefault(t => t.Id == id);
+
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            _tasks.Remove(task);
+
+            return NoContent();
         }
     }
 }

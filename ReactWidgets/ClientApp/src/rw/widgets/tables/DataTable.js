@@ -7,13 +7,11 @@ export default class DataTable extends CollectionDataHandler(ComponentBase) {
 
     handleTableChange = (pagination, filters, sorter) => {
 
-        console.log('Various parameters', pagination, filters, sorter);
-
         this.updatingData = true;
 
-        const filter = Object.keys(filters).length ?
-            filters : // TODO: Process this one into AND if more than one
-            null;
+        //const filter = Object.keys(filters).length ?
+        //    filters : // TODO: Process this one into AND if more than one
+        //    null;
 
         const sorters = Object.keys(sorter).length ?
             [{
@@ -23,7 +21,8 @@ export default class DataTable extends CollectionDataHandler(ComponentBase) {
             null;
 
         this.setState({
-            filter,
+            ...this.state,
+            //filter, Uncomment this once we can merge the filters
             sorters
         });
     };
@@ -74,7 +73,7 @@ export default class DataTable extends CollectionDataHandler(ComponentBase) {
 
         let columns = this.getColumns();
 
-        return (
+        return (           
             <div>
                 <Table
                     rowKey={recordKey.toString()}
