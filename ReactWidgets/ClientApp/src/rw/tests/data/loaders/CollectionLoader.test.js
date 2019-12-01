@@ -1,4 +1,7 @@
 ﻿import CollectionLoader from '../../../data/loaders/CollectionLoader';
+import ComparisonOperators from '../../../data/ComparisonOperators';
+import StringFunctions from '../../../data/StringFunctions';
+import LogicalOperators from '../../../data/LogicalOperators';
 
 test('CollectionLoader returns an URL with no parameters', () => {
 
@@ -44,14 +47,14 @@ test('CollectionLoader returns an URL with $filter contains field', () => {
 
     expect(loader.buildUrl({
         filter: {
-            field: 'Field1',
-            operator: 'contains',
+            fieldName: 'Field1',
+            operator: StringFunctions.Contains,
             value: 'ABC'
         }
     })).toBe("http://localhost:1234/api/fields?$filter=contains(Field1, 'ABC')");
 });
 
-test('CollectionLoader returns an URL with $filter not contains field', () => {
+test('CollectionLoader returns an URL with $filter not contains fieldName', () => {
 
     const loader = new CollectionLoader({
         url: 'http://localhost:1234/api/fields'
@@ -59,11 +62,11 @@ test('CollectionLoader returns an URL with $filter not contains field', () => {
 
     expect(loader.buildUrl({
         filter: {
-            operator: 'not',
+            operator: LogicalOperators.Not,
             filter:
             {
-                field: 'Field1',
-                operator: 'contains',
+                fieldName: 'Field1',
+                operator: StringFunctions.Contains,
                 value: 'ABC'
             }
         }
@@ -78,20 +81,20 @@ test('CollectionLoader returns an URL with $filter composite filter using not co
 
     expect(loader.buildUrl({
         filter: {
-            operator: 'and',
+            operator: LogicalOperators.And,
             filters: [
                 {
-                    operator: 'not',
+                    operator: LogicalOperators.Not,
                     filter:
                     {
-                        field: 'Field1',
-                        operator: 'contains',
+                        fieldName: 'Field1',
+                        operator: StringFunctions.Contains,
                         value: 'ABC'
                     }
                 },
                 {
-                    field: 'Field2',
-                    operator: 'eq',
+                    fieldName: 'Field2',
+                    operator: ComparisonOperators.IsEqual,
                     value: 'def'
                 }
             ]
@@ -109,11 +112,11 @@ test('CollectionLoader returns an URL with $orderby', () => {
     expect(loader.buildUrl({
         sorters: [
             {
-                field: 'Field1',
+                fieldName: 'Field1',
                 order: 'asc'
             },
             {
-                field: 'Field2',
+                fieldName: 'Field2',
                 order: 'desc'
             }
         ]
@@ -156,13 +159,13 @@ test('CollectionLoader returns an URL with a combination of all above', () => {
                     operator: 'not',
                     filter:
                     {
-                        field: 'Field1',
+                        fieldName: 'Field1',
                         operator: 'contains',
                         value: 'ABC'
                     }
                 },
                 {
-                    field: 'Field2',
+                    fieldName: 'Field2',
                     operator: 'eq',
                     value: 'def'
                 }
@@ -171,11 +174,11 @@ test('CollectionLoader returns an URL with a combination of all above', () => {
         },
         sorters: [
             {
-                field: 'Field1',
+                fieldName: 'Field1',
                 order: 'asc'
             },
             {
-                field: 'Field2',
+                fieldName: 'Field2',
                 order: 'desc'
             }
         ],

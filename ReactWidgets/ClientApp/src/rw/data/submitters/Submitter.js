@@ -1,4 +1,5 @@
 import processResponse from '../processResponse';
+import utils from '../../utils';
 
 export default class Submitter {
 
@@ -12,7 +13,7 @@ export default class Submitter {
         this.url = cfg.url;
     }
 
-    async submit(cfg) {
+    submit(cfg) {
 
         cfg.headers = cfg.headers || {};
 
@@ -21,7 +22,9 @@ export default class Submitter {
             cfg.headers['Content-Type'] = 'application/json';
         }
 
-        await fetch(this.url,
+        let url = this.buildUrl(cfg);
+
+        fetch(url,
             {
                 method: cfg.method,
                 headers: new Headers(cfg.headers),
@@ -33,5 +36,35 @@ export default class Submitter {
             .catch(error => {
                 this.onError(error);
             });
+    }
+
+    buildUrl(cfg) {
+
+        cfg = cfg || {}; // It might be undefined if no extra configuration is provided
+
+        const qs = [];
+
+        let url;
+
+        if (cfg.params) {
+
+            const prms = utils.buildParams(this.url, cfg.params);
+
+            if (prms.params) {
+
+                qs.push(prms.params);
+            }
+
+            if (prms.url) {
+
+                url = prms.url;
+            }
+        }
+
+        url = url || this.url;
+
+        return qs.length ?
+            `${url}?${qs.join('&')}` :
+            url;
     }
 }

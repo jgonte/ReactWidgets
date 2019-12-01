@@ -1,7 +1,9 @@
 import ComparisonOperators from '../ComparisonOperators';
 import LogicalOperators from '../LogicalOperators';
+import MultiValueOperators from '../MultiValueOperators';
 import StringFunctions from '../StringFunctions';
 import Loader from './Loader';
+import utils from '../../utils';
 
 // Loader of a collection of items using OData specifications
 export default class CollectionLoader extends Loader {
@@ -43,16 +45,28 @@ export default class CollectionLoader extends Loader {
             qs.push(orderBy);
         }
 
-        const params = this.buildParams(cfg.params);
+        let url;
 
-        if (params) {
+        if (cfg.params) {
 
-            qs.push(params);
+            const prms = utils.buildParams(this.url, cfg.params);
+
+            if (prms.params) {
+
+                qs.push(prms.params);
+            }
+
+            if (prms.url) {
+
+                url = prms.url;
+            }
         }
 
+        url = url || this.url;
+
         return qs.length ?
-            `${this.url}?${qs.join('&')}` :
-            this.url;
+            `${url}?${qs.join('&')}` :
+            url;
     }
 
     buildFilter(filter) {
@@ -91,7 +105,49 @@ export default class CollectionLoader extends Loader {
                         throw new Error(`Operator: '${filter.operator}' requires one child filter.`);
                     }
 
-                    return `${operator} ${this.buildFilter(filter.filter)}`; // Recurse
+                    const childFilter = this.buildFilter(filter.filter); // Recurse
+
+                    return childFilter ?
+                        `${operator} ${childFilter}`
+                        : null; // Nothing to "not"
+                }
+            case MultiValueOperators.In:
+            case MultiValueOperators.NotIn:
+                {
+                    if (!filter.fieldName) {
+
+                        throw new Error(`Operator: '${filter.operator}' requires a field.`);
+                    }
+
+                    let fieldValues;
+
+                    if (typeof filter.fieldValues === 'function') {
+
+                        fieldValues = filter.fieldValues();
+                    }
+                    else {
+
+                        throw new Error(`Invalid field values in filter with operator: '${MultiValueOperators.In}'`)
+                    }
+
+                    if (Array.isArray(fieldValues)) {
+
+                        if (!fieldValues.length) {
+
+                            if (typeof filter.fieldValues === 'function') {
+
+                                return null; // The function did not return any values
+                            }
+                            else {
+
+                                throw new Error("Values are required for multi-value operators");
+                            }
+                        }
+
+                        fieldValues = fieldValues.join(', ');
+                    }
+
+                    return `${filter.fieldName} ${operator} (${fieldValues})`;
                 }
             case ComparisonOperators.IsEqual:
             case ComparisonOperators.IsNotEqual:

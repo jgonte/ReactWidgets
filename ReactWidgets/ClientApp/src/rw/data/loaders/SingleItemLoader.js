@@ -1,4 +1,5 @@
 ﻿import Loader from './Loader';
+import utils from '../../utils';
 
 // Loader of a single item using OData specifications
 export default class SingleItemLoader extends Loader {
@@ -16,15 +17,27 @@ export default class SingleItemLoader extends Loader {
             qs.push(`$select=${select}`);
         }
 
-        const params = this.buildParams(cfg.params);
+        let url;
 
-        if (params) {
+        if (cfg.params) {
 
-            qs.push(params);
+            const prms = utils.buildParams(this.url, cfg.params);
+
+            if (prms.params) {
+
+                qs.push(prms.params);
+            }
+
+            if (prms.url) {
+
+                url = prms.url;
+            }
         }
 
+        url = url || this.url;
+
         return qs.length ?
-            `${this.url}?${qs.join('&')}` :
-            this.url;
+            `${url}?${qs.join('&')}` :
+            url;
     }
 }

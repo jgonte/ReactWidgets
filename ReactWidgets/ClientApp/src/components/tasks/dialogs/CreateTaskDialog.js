@@ -10,7 +10,7 @@ const CreateTaskDialog = props => (
         form={
             <CreateTaskForm />
         }
-        message="Task with id: '{{params}}' was successfully created"
+        message="Task with id: '{{id}}' was successfully created"
     />
 );
 

@@ -1,4 +1,3 @@
-
 const ComparisonOperators = {
     IsEqual: 'eq',
     IsNotEqual: 'ne',

@@ -5,31 +5,9 @@ import { Modal } from 'antd';
 // Dialog that connects a single form for insert
 export default class CreateFormDialog extends Dialog {
 
-    displayMessage(data) {
+    icon = 'database';
 
-        let { message } = this.props;
-
-        if (!message) {
-
-            return;
-        }
-
-        if (message.indexOf('{{params}}') > -1) { // Replace with the value
-
-            const params = data.payload.id;
-
-            const keys = Object.keys(params);
-
-            message = message.replace(/{{params}}/g,
-                keys.length === 1 ? params[keys[0]] : JSON.stringify(params)
-            );
-        }
-
-        Modal.success({
-            title: 'Success',
-            content: message
-        });
-    }
+    iconColor = '#1890ff';
 
     render() {
 
@@ -41,13 +19,12 @@ export default class CreateFormDialog extends Dialog {
 
                     this.getParent(2).loadableComponent.load();
 
-                    this.getParent().displayMessage(data);
+                    this.getParent().displayMessage(data.payload);
                 }
             }
         );
 
         const {
-            title,
             okText,
             okType,
             handleOk,
@@ -57,7 +34,7 @@ export default class CreateFormDialog extends Dialog {
         return (
             <Modal
                 visible={this.state.visible}
-                title={title}
+                title={this.renderTitle()}
                 okText={okText}
                 okType={okType}
                 onOk={handleOk}
@@ -69,18 +46,7 @@ export default class CreateFormDialog extends Dialog {
         );
     }
 
-
-    onShow = () => {
-
-        const form = this.children[0];
-
-        if (form && this.params) { // The form was mounted and the the params were passed
-
-            form.setLoadParams(this.params);
-
-            form.load();
-        }
-    }
-
     onOk = () => this.children[0].submit();
+
+    onCancel = () => this.children[0].reset();
 }

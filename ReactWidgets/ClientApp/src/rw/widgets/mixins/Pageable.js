@@ -1,7 +1,7 @@
 import React from 'react';
 import Pager from '../pagers/Pager';
 
-const Pageable = (Base) => class extends Base {
+const Pageable = Base => class extends Base {
 
     pageable = true;
 

@@ -25,9 +25,10 @@ export { default as AsyncLoadableDataTable } from './widgets/tables/AsyncLoadabl
 export { default as LocalLoadableDataTable } from './widgets/tables/LocalLoadableDataTable';
 
 // List
-export { default as List } from './widgets/lists/List';
 export { default as ListItem } from './widgets/lists/ListItem';
+export { default as DataList } from './widgets/lists/DataList';
 export { default as AsyncLoadableDataList } from './widgets/lists/AsyncLoadableDataList';
+export { default as DualListBox } from './widgets/lists/DualListBox';
 
 // Forms
 export { default as LocalForm } from './widgets/forms/LocalForm';
@@ -44,6 +45,7 @@ export { default as DateTimeField } from './widgets/fields/DateTimeField';
 export { default as CheckBox } from './widgets/fields/CheckBox';
 export { default as CheckBoxGroup } from './widgets/fields/CheckBoxGroup';
 export { default as LabelledField } from './widgets/fields/LabelledField';
+export { default as ComboBox } from './widgets/fields/ComboBox';
 export { default as AsyncLoadableComboBox } from './widgets/fields/AsyncLoadableComboBox';
 export { default as CrudField } from './widgets/fields/CrudField';
 
@@ -51,6 +53,8 @@ export { default as CrudField } from './widgets/fields/CrudField';
 export { default as FilterPanel } from './widgets/filters/FilterPanel';
 export { default as FilterField } from './widgets/filters/FilterField';
 export { default as ComparisonOperators } from './data/ComparisonOperators';
+export { default as LogicalOperators } from './data/LogicalOperators';
+export { default as MultiValueOperators } from './data/MultiValueOperators';
 export { default as StringFunctions } from './data/StringFunctions';
 
 // Dialogs

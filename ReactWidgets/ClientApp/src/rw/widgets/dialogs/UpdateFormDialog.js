@@ -5,31 +5,9 @@ import { Modal } from 'antd';
 // Dialog that connects a single form
 export default class UpdateFormDialog extends Dialog {
 
-    displayMessage() {
+    icon = 'database';
 
-        let { message } = this.props;
-
-        if (!message) {
-
-            return;
-        }
-
-        if (message.indexOf('{{params}}') > -1) { // Replace with the value
-
-            const params = this.params;
-
-            const keys = Object.keys(params);
-
-            message = message.replace(/{{params}}/g,
-                keys.length === 1 ? params[keys[0]] : JSON.stringify(params)
-            );
-        }
-
-        Modal.success({
-            title: 'Success',
-            content: message
-        });
-    }
+    iconColor = '#1890ff';
 
     render() {
 
@@ -45,7 +23,7 @@ export default class UpdateFormDialog extends Dialog {
                 },
                 onMount: function () {
 
-                    this.setLoadParams(this.props.parent.params);
+                    this.params = this.props.parent.params;
 
                     this.load();
                 }
@@ -53,7 +31,6 @@ export default class UpdateFormDialog extends Dialog {
         );
 
         const {
-            title,
             okText,
             okType,
             handleOk,
@@ -63,7 +40,7 @@ export default class UpdateFormDialog extends Dialog {
         return (
             <Modal
                 visible={this.state.visible}
-                title={title}
+                title={this.renderTitle()}
                 okText={okText}
                 okType={okType}
                 onOk={handleOk}
@@ -82,7 +59,7 @@ export default class UpdateFormDialog extends Dialog {
 
         if (form && this.params) { // The form was mounted and the the params were passed
 
-            form.setLoadParams(this.params);
+            form.params = this.params;
 
             form.load();
         }

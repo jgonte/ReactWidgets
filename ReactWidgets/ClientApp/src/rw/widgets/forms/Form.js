@@ -91,41 +91,48 @@ export default class Form extends Container(ComponentBase) {
         }
     }
 
-    handleChange(event) {
+    handleChange(field, rawValue) {
 
-        // If a value was provided in the event then get that value
-        const value = event.value || getTargetValue(event.target);
+        // const value = event.value || getTargetValue(event.target);
 
-        const name = event.name || event.target.name;
+        // const name = event.name || event.target.name;
 
         let data = this.state.data || {};
 
-        let field = data[name];
+        // let field = data[name];
 
-        if (Array.isArray(field)) { // Multiple values field
+        // if (Array.isArray(field)) { // Multiple values field
 
-            if (getTargetValue(event.target)) { // Is checked, add the value
+        //     if (getTargetValue(event.target)) { // Is checked, add the value
 
-                field.push(value);
-            }
-            else { // Is unchecked, remove value
+        //         field.push(value);
+        //     }
+        //     else { // Is unchecked, remove value
 
-                const i = field.indexOf(value);
+        //         const i = field.indexOf(value);
 
-                if (i > -1) {
+        //         if (i > -1) {
 
-                    field.splice(i, 1);
-                }
-            }
+        //             field.splice(i, 1);
+        //         }
+        //     }
             
-            data = { ...data, [name]: field };
-        }
-        else { // Single value field
+        //     data = { ...data, [name]: field };
+        // }
+        // else { // Single value field
 
-            data = { ...data, [name]: value };
-        }
+        //     data = { ...data, [name]: value };
+        // }
 
-        this.setState({ ...this.state, data });
+        data = { 
+            ...data, 
+            [field.props.name]: rawValue 
+        };
+
+        this.setState({ 
+            ...this.state, 
+            data 
+        });
 
         if (this.onChange) {
 
@@ -157,17 +164,23 @@ export default class Form extends Container(ComponentBase) {
 
     removeValue(dataProperty, value) {
 
-        this.state.data[dataProperty] = this.state.data[dataProperty].filter(v => !utils.areEqual(v, value));
+        this.state.data[dataProperty] = this.state.data[dataProperty].filter(v => !utils.areEquivalent(v, value));
     }
 
     reset() {
+
+        this.fields.forEach(f => f.resetValidation());
 
         const data = Object.keys(this.state.data).map(key => {
 
             return { [key]: '' };
         });
 
-        this.setState({ ...this.state, data });
+        this.setState({
+            ...this.state,
+            submitting: false,
+            data
+        });
     }
 
     validate() {
@@ -194,5 +207,10 @@ export default class Form extends Container(ComponentBase) {
     onBeforeSubmit() {
 
         return this.validate();
+    }
+
+    onAfterSubmit() {
+
+        return this.reset();
     }
 }

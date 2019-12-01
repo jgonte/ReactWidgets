@@ -56,6 +56,25 @@ const NavMenu = props => (
                 </span>
             </Link>
         </Menu.Item>
+
+        <Menu.Item key="6">
+            <Link to="/webComponents">
+                <span>
+                    <Icon type="robot" />
+                    Web Components
+                </span>
+            </Link>
+        </Menu.Item>
+
+        <Menu.Item key="7">
+            <Link to="/dualListBox">
+                <span>
+                    <Icon type="unordered-list" />
+                    Dual Listbox
+                </span>
+            </Link>
+        </Menu.Item>
+
     </Menu>
 );
 
