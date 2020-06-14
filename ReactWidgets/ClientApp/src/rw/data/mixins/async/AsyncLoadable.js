@@ -62,6 +62,9 @@ const AsyncLoadable = Base => class extends Base {
 
         this.metadata = getMetadata(data);
 
+        // Ensure other actions are taken before re-rendering
+        this._onLoadActions.forEach(onLoadAction => onLoadAction(data));
+
         if (this._setState) {
 
             this._setState({
@@ -72,8 +75,6 @@ const AsyncLoadable = Base => class extends Base {
                 ...this.metadata.pagination
             });
         }
-
-        this._onLoadActions.forEach(onLoadAction => onLoadAction(data));
 
         if (this.onLoadData) {
 

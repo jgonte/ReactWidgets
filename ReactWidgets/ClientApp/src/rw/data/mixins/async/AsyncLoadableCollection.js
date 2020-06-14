@@ -1,6 +1,7 @@
 ﻿import AsyncLoadable from './AsyncLoadable';
 import CollectionLoader from '../../../data/loaders/CollectionLoader';
 import LogicalOperators from '../../../data/LogicalOperators';
+import RecordSet from '../../records/RecordSet';
 
 const AsyncLoadableCollection = Base => class extends AsyncLoadable(Base) {
 
@@ -21,6 +22,10 @@ const AsyncLoadableCollection = Base => class extends AsyncLoadable(Base) {
         });
 
         this.onLoaderCreated();
+
+        this._recordSet = new RecordSet(cfg);
+
+        this._onLoadActions.push(data => this._recordSet.load(data.payload));
     }
 
     load() {

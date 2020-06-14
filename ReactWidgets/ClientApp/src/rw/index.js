@@ -7,8 +7,14 @@ export { default as utils } from './utils';
 // Base component
 export { default as ComponentBase } from './ComponentBase';
 
+// Submitter
+export { default as Submitter } from './data/submitters/Submitter';
+
 // Data mixins
 export { default as AsyncLoadableSingleItem } from './data/mixins/async/AsyncLoadableSingleItem';
+
+// Records
+export { default as RecordStatuses } from './data/records/RecordStatuses';
 
 // Widget mixins
 export { default as DataHandler } from './widgets/mixins/DataHandler';
@@ -67,6 +73,9 @@ export { default as LocalDeleteDialog } from './widgets/dialogs/LocalDeleteDialo
 // Panels
 export { default as Panel } from './widgets/panels/Panel';
 export { default as CrudPanel } from './widgets/panels/CrudPanel';
+
+// Wizard
+export { default as Wizard } from './widgets/wizards/Wizard';
 
 // 3rd party
 export {

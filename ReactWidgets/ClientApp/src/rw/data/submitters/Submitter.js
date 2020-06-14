@@ -11,6 +11,11 @@ export default class Submitter {
         }
 
         this.url = cfg.url;
+
+        // Standalone event handlers
+        this.onData = cfg.onData;
+
+        this.onError = cfg.onError;
     }
 
     submit(cfg) {

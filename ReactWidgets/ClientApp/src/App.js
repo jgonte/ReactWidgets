@@ -8,6 +8,7 @@ import { SendData } from './components/SendData';
 import TasksPage from './components/tasks/TasksPage';
 import { WebComponents } from './components/WebComponents';
 import DualListBoxDemo from './components/DualListBoxDemo';
+import WizardDemo from './components/WizardDemo';
 import NotFoundPage from './components/NotFoundPage';
 
 const App = () => (
@@ -20,6 +21,7 @@ const App = () => (
             <Route path='/tasks' component={TasksPage} />
             <Route path='/webComponents' component={WebComponents} />
             <Route path='/dualListBox' component={DualListBoxDemo} />
+            <Route path='/wizard' component={WizardDemo} />
             <Route component={NotFoundPage} />
         </Switch>
     </AppLayout>

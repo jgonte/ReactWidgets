@@ -56,5 +56,19 @@ namespace ReactWidgets.Controllers
 
             return students;
         }
+
+        // POST: api/enrollments
+        [HttpPost]
+        public IActionResult Post([FromBody] IEnumerable<Enrollment> enrollments)
+        {
+            return NoContent();
+        }
+
+        // DELETE: api/enrollments
+        [HttpDelete]
+        public IActionResult Delete([FromBody] IEnumerable<Enrollment> enrollments)
+        {
+            return NoContent();
+        }
     }
 }

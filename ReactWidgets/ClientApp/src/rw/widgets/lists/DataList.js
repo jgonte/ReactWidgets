@@ -9,21 +9,15 @@ export default class DataList extends SelectionContainer(CollectionDataHandler(C
 
     renderComponent(data) {
 
-        const {
-            recordKey,
-            minWidth,
-            minHeight,
-            renderItem
-        } = this.props;
+        //const {
+        //    minWidth,
+        //    minHeight,
+        //} = this.props;
 
-        let scroll = {
-            x: minWidth,
-            y: minHeight
-        };
-
-        const {
-            sorters
-        } = this.state;
+        //let scroll = {
+        //    x: minWidth,
+        //    y: minHeight
+        //};
 
         return (
             <ul className="ant-list-items">
@@ -54,13 +48,35 @@ export default class DataList extends SelectionContainer(CollectionDataHandler(C
 
         return data.map(item => {
 
+            const id = Array.isArray(recordKey) ? // Multiple keys
+                recordKey.map(key => item[key]) :
+                item[recordKey];
+
+            const predicate = Array.isArray(recordKey) ?
+                (i1, i2) => {
+
+                    for (var i = 0; i < recordKey.length; ++i) {
+
+                        let key = recordKey[i];
+
+                        if (i1[key] !== i2[key]) {
+
+                            return false;
+                        }
+                    }
+
+                    return true;
+                } :
+                (i1, i2) => i1[recordKey] === i2[recordKey];
+
             return React.cloneElement(
                 renderItem(item),
                 {
                     parent: this,
                     data: item,
-                    key: item[recordKey],
-                    selected: this.isSelected(item, (i1, i2) => i1[recordKey] === i2[recordKey])
+                    key: id,
+                    record: this._recordSet.getById(id),
+                    selected: this.isSelected(item, predicate)
                 }
             );
         })

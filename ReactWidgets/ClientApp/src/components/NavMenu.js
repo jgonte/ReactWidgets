@@ -75,6 +75,15 @@ const NavMenu = props => (
             </Link>
         </Menu.Item>
 
+        <Menu.Item key="8">
+            <Link to="/wizard">
+                <span>
+                    <Icon type="unordered-list" />
+                    Wizard
+                </span>
+            </Link>
+        </Menu.Item>
+
     </Menu>
 );
 

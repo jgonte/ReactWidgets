@@ -4,11 +4,13 @@ import {
     Panel,
     DualListBox,
     ListItem,
-    AsyncLoadableDataList,    componentManager,
+    AsyncLoadableDataList,
+    RecordStatuses,
+    componentManager,
     LogicalOperators,
-    MultiValueOperators
+    MultiValueOperators,
+    Submitter
 } from '../rw';
-
 
 const DualListBoxDemo = props => (
     <Card title="Assign People"
@@ -28,22 +30,31 @@ const DualListBoxDemo = props => (
                         //autoLoad={false} // Wait for the assigned list to load first so we can filter out the selected ones
                         recordKey="id"
                         renderItem={item => (
-                            <ListItem>
+                            <ListItem
+                            //onRecordChanged={cfg => {
+
+                            //    if (cfg.record.status === RecordStatuses.Removed) {
+
+                            //        this.setSelectable(false);
+                            //    }
+                            //}}
+                            >
                                 (<span>{item.id}</span>) - <span>{item.fullName}</span>
                             </ListItem>
                         )}
-                        //initialFilter={{
-                        //    operator: LogicalOperators.Not,
-                        //    filter: {
-                        //        fieldName: 'id',
-                        //        operator: MultiValueOperators.In,
-                        //        fieldValues: () => {
-                        //            return componentManager.get('assignedPeopleList')
-                        //                .getData()
-                        //                .map(item => item.id);
-                        //        }
-                        //    }
-                        //}}
+                    //initialFilter={{
+                    //    operator: LogicalOperators.Not,
+                    //    filter: {
+                    //        fieldName: 'id',
+                    //        operator: MultiValueOperators.In,
+                    //        fieldValues: () => {
+                    //            return componentManager.get('assignedPeopleList')
+                    //                .getData()
+                    //                .map(item => item.id);
+                    //        }
+                    //    }
+                    //}}
+
                     />
                 </Panel>
             }
@@ -54,20 +65,65 @@ const DualListBoxDemo = props => (
                     <AsyncLoadableDataList
                         id="assignedPeopleList"
                         loadUrl="api/enrollments"
-                        recordKey="id"
+                        recordKey={[
+                            'organizationId',
+                            'studentId'
+                        ]}
                         renderItem={item => (
                             <ListItem>
                                 [{item.organizationId}] (<span>{item.studentId}</span>) - <span>{item.fullName}</span>
                             </ListItem>
                         )}
-                        onLoadData={data => {
-                            // Now load the available list filtering out the already assigned people in the list
-                            componentManager.get('availablePeopleList').load();
-                        }}
-                        autoLoad={false}
+                        //onLoadData={data => {
+                        //    // Now load the available list filtering out the already assigned people in the list
+                        //    componentManager.get('availablePeopleList').load();
+                        //}}
+                        //autoLoad={false}
                     />
                 </Panel>
             }
+            onAddSelectedButtonClicked={selection => {
+                const organizationId = 1;
+
+                const data = selection.map(item => {
+                    return {
+                        organizationId,
+                        studentId: item.id,
+                        fullName: item.fullName
+                    }
+                });
+
+                new Submitter({
+                    url: 'api/enrollments',
+                    onData: data => {
+
+                        componentManager.get('availablePeopleList').load();
+
+                        componentManager.get('assignedPeopleList').load();
+                    },
+                    onError: error => alert(JSON.stringify(error))
+                })
+                .submit({
+                    method: 'post',
+                    data
+                });
+            }}
+            onRemoveSelectedButtonClicked={selection => {
+                new Submitter({
+                    url: 'api/enrollments',
+                    onData: data => {
+
+                        componentManager.get('availablePeopleList').load();
+
+                        componentManager.get('assignedPeopleList').load();
+                    },
+                    onError: error => alert(JSON.stringify(error))
+                })
+                .submit({
+                    method: 'delete',
+                    data: selection
+                });
+            }}
         />
 
     </Card>

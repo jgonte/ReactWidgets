@@ -1,16 +1,16 @@
 const Selectable = Base => class extends Base {
 
-    selectable = true;
-
     state = this.state || {};
 
     constructor(props) {
 
         super(props);
 
+        this.state.selectable = true;
+
         if (typeof props.selectable !== 'undefined') {
 
-            this.selectable = props.selectable;
+            this.state.selectable = props.selectable;
         }
 
         this._selectionHandler = props.selectionhandler ? props.selectionhandler() : null;
@@ -33,9 +33,17 @@ const Selectable = Base => class extends Base {
         }
     }
 
+    setSelectable(selectable) {
+
+        this._setState({
+            ...this.state,
+            selectable
+        })
+    }
+
     select(selected) {
 
-        if (!this.selectable) {
+        if (!this.state.selectable) {
 
             return;
         }
@@ -53,15 +61,10 @@ const Selectable = Base => class extends Base {
         }
     }
 
-    isSelected() {
-
-        return this.state.selected;
-    }
-
     // Toogle selection
     _handleClick() {
 
-        var selected = !this.isSelected();
+        var selected = !this.state.selected;
 
         this.select(selected);
     }

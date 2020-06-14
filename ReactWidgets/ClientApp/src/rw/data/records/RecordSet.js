@@ -31,13 +31,32 @@ export default class RecordSet {
 
     getById(id) {
 
+        const recordKey = this._recordKey;
+
+        const predicate = Array.isArray(recordKey) ?
+            r => {
+
+                let i = 0;
+
+                for (var key in recordKey) {
+
+                    if (r.data[key] !== id[i++]) {
+
+                        return false;
+                    }
+                }
+
+                return true;
+            } :
+            r => r.data[recordKey] === id;
+
         // Find a record that matches that id
-        const records = this._records.filter(r => r.data[this._recordKey] === id);
+        const records = this._records.filter(predicate);
 
         switch (records.length) {
             case 0: return null; // Not found;
             case 1: return records[0];
-            default: throw new Error(`Duplicate records with ${this._recordKey} = ${id}`);
+            default: throw new Error(`Duplicate records with ${recordKey} = ${id}`);
         }
     }
 
@@ -54,13 +73,21 @@ export default class RecordSet {
 
         if (record) {
 
-            record.update(data);
+            record.update(data, this.onRecordChanged);
         }
         else {
 
-            this._records.push(
-                new Record(data, RecordStatuses.Added)
-            );
+            const record = new Record(data, RecordStatuses.Added);
+
+            this._records.push(record);
+
+            if (this.onRecordChanged) {
+
+                this.onRecordChanged({
+                    record,
+                    newState: RecordStatuses.Added
+                });
+            }
         }
     }
 
@@ -82,7 +109,7 @@ export default class RecordSet {
 
         if (record) {
 
-            record.remove();
+            record.remove(this.onRecordChanged);
         }
     }
 

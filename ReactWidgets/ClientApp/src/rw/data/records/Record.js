@@ -47,9 +47,8 @@ export default class Record {
      * Updates a single field in the record
      * @param {any} key - The key of the field to update
      * @param {any} newValue - The new value of the field to update
-     * @param {any} onChange - Callback called when the field value is different
      */
-    updateField(key, newValue, onChange) {
+    updateField(key, newValue) {
 
         const oldValue = this._data[key];
 
@@ -71,7 +70,7 @@ export default class Record {
                         });
                     }
                     break;
-                case 1: // If the new value equals the initial value of the field, then remove that field form the changed ones
+                case 1: // If the new value equals the initial value of the field, then remove that field from the changed ones
                     {
                         const changedField = changedFields[0];
 
@@ -92,6 +91,8 @@ export default class Record {
 
             this._data[key] = newValue; // Update the value of the field in the record
 
+            const oldStatus = this._status;
+
             // Update the record status
             if (this._changedFields.length) {
 
@@ -108,26 +109,44 @@ export default class Record {
                 }
             }
 
-            if (onChange) {
+            if (this.onChange) {
 
-                onChange(key, newValue, oldValue);
+                this.onChange({
+                    record: this,
+                    key,
+                    newValue,
+                    oldValue,
+                    newStatus: this._status,
+                    oldStatus
+                });
             }
 
         }
     }
 
-    update(data, onChange) {
+    update(data) {
 
         for (const key in data) {
 
-            this.updateField(key, data[key], onChange);
+            this.updateField(key, data[key]);
         }
     }
 
     remove() {
 
+        const oldStatus = this._status;
+
         this._status = RecordStatuses.Removed;
 
         // Keep the original data and snapshot just in case we decide to undo it
+
+        if (this.onChange) {
+
+            this.onChange({
+                record: this,
+                newStatus: this._status,
+                oldStatus
+            });
+        }
     }
 }

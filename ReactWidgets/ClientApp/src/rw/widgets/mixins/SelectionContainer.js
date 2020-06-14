@@ -3,6 +3,7 @@ const SelectionContainer = Base => class extends Base {
 
     _selection = [];
 
+
     getSelection() {
 
         return this._selection;
@@ -11,6 +12,11 @@ const SelectionContainer = Base => class extends Base {
     addSelection(selection) {
 
         this._selection.push(selection);
+
+        if (this.onSelectionChanged) {
+
+            this.onSelectionChanged(this._selection);
+        }
     }
 
     removeSelection(selection) {
@@ -18,6 +24,11 @@ const SelectionContainer = Base => class extends Base {
         const index = this._selection.indexOf(selection);
 
         this._selection.splice(index, 1);
+
+        if (this.onSelectionChanged) {
+
+            this.onSelectionChanged(this._selection);
+        }
     }
 
     isSelected(item, predicate) {
