@@ -10,9 +10,28 @@ export default class CollectionLoader extends Loader {
 
     buildUrl(cfg) {
 
-        cfg = cfg || {}; // It might be undefined if no extra configuration is provided
-
         let qs = [];
+
+        let url;
+
+        if (cfg.params) {
+
+            const prms = utils.buildParams(this.url, cfg.params);
+
+            if (prms.params) {
+
+                qs.push(prms.params);
+            }
+
+            if (prms.url) {
+
+                url = prms.url;
+            }
+        }
+
+        url = url || this.url;
+
+        cfg = cfg || {}; // It might be undefined if no extra configuration is provided
 
         if (cfg.top) {
 
@@ -44,25 +63,6 @@ export default class CollectionLoader extends Loader {
 
             qs.push(orderBy);
         }
-
-        let url;
-
-        if (cfg.params) {
-
-            const prms = utils.buildParams(this.url, cfg.params);
-
-            if (prms.params) {
-
-                qs.push(prms.params);
-            }
-
-            if (prms.url) {
-
-                url = prms.url;
-            }
-        }
-
-        url = url || this.url;
 
         return qs.length ?
             `${url}?${qs.join('&')}` :

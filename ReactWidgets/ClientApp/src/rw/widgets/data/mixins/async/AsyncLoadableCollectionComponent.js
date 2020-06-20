@@ -13,6 +13,12 @@ const AsyncLoadableCollectionComponent = Base => class extends AsyncLoadableColl
 
             this.load();
         }
+
+        // Clear any selection if loaded
+        if (this.clearSelection) {
+
+            this._onLoadActions.push(data => this.clearSelection());
+        }
     }
 
     setFilter(filter) {

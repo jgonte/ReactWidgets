@@ -16,7 +16,13 @@ const InputField = Base => class extends Base {
 
         this.validateOnChange = this.validateOnChange || props.validateOnChange;
 
-        this.onChangeHandler = props.onChangeHandler || this.findParent(p => p.handleChange);
+        this.onChangeHandler = props.onChangeHandler || this.findParent(p => p.handleChange, false) || 
+        { 
+            fields:[], 
+            state: {
+                data: []
+            }
+        };
     }
 
     componentDidMount() {
@@ -40,7 +46,7 @@ const InputField = Base => class extends Base {
 
         super.componentWillUnmount();
 
-        // Remove this field to the handler
+        // Remove this field from the handler
         const index = this.onChangeHandler.fields.indexOf(this);
 
         this.onChangeHandler.fields.splice(index, 1);
@@ -85,7 +91,10 @@ const InputField = Base => class extends Base {
 
     notifyChangeHandler(rawValue) {
 
-        this.onChangeHandler.handleChange(this, rawValue);
+        if (this.onChangeHandler.handleChange) {
+
+            this.onChangeHandler.handleChange(this, rawValue);
+        }
     }
 
     getRawValue() {

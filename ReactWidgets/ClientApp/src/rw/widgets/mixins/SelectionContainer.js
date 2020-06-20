@@ -35,6 +35,11 @@ const SelectionContainer = Base => class extends Base {
 
         return this._selection.filter(i => predicate(i, item)).length > 0;
     }
+
+    clearSelection() {
+        
+        this._selection.length = 0;
+    }
 };
 
 export default SelectionContainer;

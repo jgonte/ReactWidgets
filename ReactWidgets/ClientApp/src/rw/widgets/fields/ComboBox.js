@@ -11,6 +11,11 @@ export default class ComboBox extends DataHandler(Field) {
 
     textProperty = 'text';
 
+    state = {
+        //records: [],
+        selection: []
+    };
+
     constructor(props) {
 
         super(props);
@@ -23,6 +28,7 @@ export default class ComboBox extends DataHandler(Field) {
         this.valueProperty = valueProperty || this.valueProperty;
 
         this.textProperty = textProperty || this.textProperty;
+        
     }
 
     renderComponent(data) {
@@ -39,19 +45,26 @@ export default class ComboBox extends DataHandler(Field) {
         return (
             <Select
                 name={name}
-                value={this.getValue()}
+                value={this.getValue() || this.props.value || this.state.selection[0]}
                 placeholder={placeholder}
                 style={style}
                 disabled={disabled}
                 defaultValue={defaultValue}
                 optionFilterProp="children"
-                onChange={value => this.handleChange({
-                    target: {
-                        name: name,
-                        type: 'select',
-                        value: value
-                    }
-                })}
+                onChange={value => {
+
+                    this.state.selection[0] = value;
+
+                    this.setState(this.state);
+
+                    this.handleChange({
+                        target: {
+                            name: name,
+                            type: 'select',
+                            value: value
+                        }
+                    });
+                }}
                 onFocus={this.onFocus}
                 onBlur={this.onBlur}
                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -95,5 +108,9 @@ export default class ComboBox extends DataHandler(Field) {
                 {record[textProperty]}
             </Option>
         );
+    }
+
+    getSelection() {
+        return this.state.selection;
     }
 }

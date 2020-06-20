@@ -36,7 +36,7 @@ const AsyncLoadableCollection = Base => class extends AsyncLoadable(Base) {
         }
 
         if (this.onBeforeLoad &&
-            this.onBeforeLoad() === false) {
+            this.onBeforeLoad(this) === false) {
 
             return;
         }
@@ -50,12 +50,12 @@ const AsyncLoadableCollection = Base => class extends AsyncLoadable(Base) {
         } = this.state;
 
         this.loader.load({
+            params: this.params,
             top: pageSize,
             skip: pageSize * (currentPage - 1),
             select: this.select,
             filter: this.mergeFilter(),
-            sorters: sorters,
-            params: this.params
+            sorters: sorters          
         });
     }
 

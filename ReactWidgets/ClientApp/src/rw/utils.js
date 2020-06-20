@@ -119,7 +119,7 @@ function equalsInternal(o1: any, o2: any, refs: Set<object>) {
 
     template(text, data) {
 
-        var result = {
+        let result = {
             keysNotInData: [] // Keys not found in the data
         };
 
@@ -130,8 +130,11 @@ function equalsInternal(o1: any, o2: any, refs: Set<object>) {
             return result; // Nothing to replace in the tamplate
         }
 
+        let matchFound = false;
+
         function processMatch(match/*, offset, string*/) {
 
+            matchFound = true;
             // Remove the {{ }} around the match
             match = match.replace('{{', '').replace('}}', '').trim();
 
@@ -146,6 +149,11 @@ function equalsInternal(o1: any, o2: any, refs: Set<object>) {
         }
 
         result.text = text.replace(/\{{\S+?\}}/g, processMatch);
+
+        if (!matchFound) {
+
+            result.keysNotInData = Object.keys(data); // None of the keys were found
+        }
 
         return result;
     },
